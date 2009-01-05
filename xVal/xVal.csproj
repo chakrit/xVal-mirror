@@ -46,14 +46,20 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Web.Mvc" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Web.Abstractions" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActiveClientSideValidationEngine.cs" />
     <Compile Include="ActiveRuleProviders.cs" />
+    <Compile Include="ClientSideValidation\IClientSideValidationEngine.cs" />
+    <Compile Include="ClientSideValidation\jQueryValidationEngine.cs" />
+    <Compile Include="Html\ValidationExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuleProviders\DataAnnotationsRuleProvider.cs" />
     <Compile Include="RuleProviders\IRuleProvider.cs" />
     <Compile Include="RuleProviders\PropertyAttributeRuleProviderBase.cs" />
-    <Compile Include="RuleProviders\Providers.cs" />
     <Compile Include="RuleProviders\ValidationRule.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

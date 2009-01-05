@@ -42,6 +42,13 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Web.Abstractions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.Routing">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -56,6 +63,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientSideValidation\ActiveClientSideValidationEngineTests.cs" />
+    <Compile Include="TestHelpers\HtmlHelperMocks.cs" />
+    <Compile Include="ClientSideValidation\IClientSideValidationEngineTests.cs" />
+    <Compile Include="ClientSideValidation\jQueryValidationTests.cs" />
+    <Compile Include="HtmlHelpers\HtmlHelpersTests.cs" />
     <Compile Include="RuleProviders\ActiveRuleProvidersTests.cs" />
     <Compile Include="RuleProviders\DataAnnotationsRuleProviderTests.cs" />
     <Compile Include="RuleProviders\IRuleProviderTests.cs" />

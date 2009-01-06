@@ -14,8 +14,8 @@ namespace xVal.Rules
         public override System.Collections.Generic.IDictionary<string, string> ListParameters()
         {
             var result = base.ListParameters();
-            result.Add("MinLength", MinLength.ToString());
-            result.Add("MaxLength", MaxLength.ToString());
+            if(MinLength.HasValue) result.Add("MinLength", MinLength.ToString());
+            if(MaxLength.HasValue) result.Add("MaxLength", MaxLength.ToString());
             return result;
         }
     }

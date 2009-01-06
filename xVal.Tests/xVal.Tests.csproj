@@ -63,10 +63,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientSideValidation\ActiveClientSideValidationEngineTests.cs" />
     <Compile Include="TestHelpers\HtmlHelperMocks.cs" />
-    <Compile Include="ClientSideValidation\IClientSideValidationEngineTests.cs" />
-    <Compile Include="ClientSideValidation\jQueryValidationTests.cs" />
     <Compile Include="HtmlHelpers\HtmlHelpersTests.cs" />
     <Compile Include="RuleProviders\ActiveRuleProvidersTests.cs" />
     <Compile Include="RuleProviders\DataAnnotationsRuleProviderTests.cs" />

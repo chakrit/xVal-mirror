@@ -51,16 +51,20 @@
     <Reference Include="System.Web.Abstractions" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActiveClientSideValidationEngine.cs" />
     <Compile Include="ActiveRuleProviders.cs" />
-    <Compile Include="ClientSideValidation\IClientSideValidationEngine.cs" />
-    <Compile Include="ClientSideValidation\jQueryValidationEngine.cs" />
-    <Compile Include="Html\ValidationExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuleProviders\DataAnnotationsRuleProvider.cs" />
     <Compile Include="RuleProviders\IRuleProvider.cs" />
     <Compile Include="RuleProviders\PropertyAttributeRuleProviderBase.cs" />
-    <Compile Include="RuleProviders\ValidationRule.cs" />
+    <Compile Include="Rules\DataType.cs" />
+    <Compile Include="Rules\DataTypeRule.cs" />
+    <Compile Include="Rules\NumericRangeRule.cs" />
+    <Compile Include="Rules\RequiredRule.cs" />
+    <Compile Include="Rules\RuleBase.cs" />
+    <Compile Include="Rules\StringLengthRule.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Html\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

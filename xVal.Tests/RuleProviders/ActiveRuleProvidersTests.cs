@@ -4,6 +4,7 @@ using System.Linq;
 using Xunit;
 using xVal.RuleProviders;
 using System.ComponentModel.DataAnnotations;
+using xVal.Rules;
 
 namespace xVal.Tests.RuleProviders
 {
@@ -33,24 +34,41 @@ namespace xVal.Tests.RuleProviders
             ActiveRuleProviders.Providers.Add(mockProvider4);
 
             // Act
-            var rules = ActiveRuleProviders.GetRulesForType(arbitraryType);
+            var rules = ActiveRuleProviders.GetRulesForType(arbitraryType).ToList();
 
             // Assert
             Assert.Equal(6, rules.Count);
-            Assert.Equal("prop1a", rules[0].PropertyName);
-            Assert.Equal("prop1b", rules[1].PropertyName);
-            Assert.Equal("prop2", rules[2].PropertyName);
-            Assert.Equal("prop3a", rules[3].PropertyName);
-            Assert.Equal("prop3b", rules[4].PropertyName);
-            Assert.Equal("prop3c", rules[5].PropertyName);
+            Assert.Equal("prop1a", rules[0].Key);
+            Assert.Equal("prop1b", rules[1].Key);
+            Assert.Equal("prop2", rules[2].Key);
+            Assert.Equal("prop3a", rules[3].Key);
+            Assert.Equal("prop3b", rules[4].Key);
+            Assert.Equal("prop3c", rules[5].Key);
         }
 
-        private IRuleProvider MakeMockRuleProvider(Type forModelType, params string[] rulePropertyNames)
+        [Fact]
+        public void GetRulesForType_Can_Handle_Provider_Returning_NULL()
         {
+            // Arrange
             var mockProvider = new Moq.Mock<IRuleProvider>();
-            mockProvider.Expect(x => x.GetRulesFromType(forModelType))
-                .Returns(from propName in rulePropertyNames
-                         select new ValidationRule(propName, new RequiredAttribute()));
+            mockProvider.Expect(x => x.GetRulesFromType(typeof(double)))
+                        .Returns((ILookup<string, RuleBase>)null);
+            ActiveRuleProviders.Providers.Clear();
+            ActiveRuleProviders.Providers.Add(mockProvider.Object);
+
+            // Act
+            var rules = ActiveRuleProviders.GetRulesForType(typeof (double));
+
+            // Assert
+            Assert.NotNull(rules);
+            Assert.Empty(rules);
+        }
+
+        private static IRuleProvider MakeMockRuleProvider(Type forModelType, params string[] rulePropertyNames)
+        {
+            var ruleset = rulePropertyNames.ToLookup(x => x, x => (RuleBase)new RequiredRule());
+            var mockProvider = new Moq.Mock<IRuleProvider>();
+            mockProvider.Expect(x => x.GetRulesFromType(forModelType)).Returns(ruleset);
             return mockProvider.Object;
         }
     }

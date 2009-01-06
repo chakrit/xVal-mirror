@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using Xunit;
 using xVal.RuleProviders;
+using xVal.Rules;
 
 namespace xVal.Tests.RuleProviders
 {
@@ -16,7 +17,7 @@ namespace xVal.Tests.RuleProviders
             // Arrange
             var arbitraryType = this.GetType();
             var mockRuleProvider = new Moq.Mock<IRuleProvider>();
-            var expectedResult = new List<ValidationRule>();
+            var expectedResult = new[] { 1 }.ToLookup(x => "prop", x => (RuleBase)new RequiredRule());
             mockRuleProvider.Expect(x => x.GetRulesFromType(arbitraryType))
                             .Returns(expectedResult);
 

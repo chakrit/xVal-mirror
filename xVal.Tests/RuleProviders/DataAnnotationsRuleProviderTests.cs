@@ -1,7 +1,12 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Threading;
 using Xunit;
 using xVal.RuleProviders;
+using xVal.Rules;
 
 namespace xVal.Tests.RuleProviders
 {
@@ -20,26 +25,83 @@ namespace xVal.Tests.RuleProviders
             var provider = new DataAnnotationsRuleProvider();
 
             // Act
-            var rules = provider.GetRulesFromType(typeof (TestModel)).ToList();
-            var rulesByPropertyName = rules.ToLookup(
-                x => x.PropertyName,
-                x => x.Rule
-                );
+            var rules = provider.GetRulesFromType(typeof (TestModel));
 
             // Assert the right set of rules were found
-            Assert.Equal(4, rules.Count);
-            Assert.Equal(2, rulesByPropertyName["PublicProperty"].Count());
-            Assert.NotEmpty(rulesByPropertyName["PublicProperty"].OfType<RequiredAttribute>());
-            Assert.NotEmpty(rulesByPropertyName["PublicProperty"].OfType<RangeAttribute>());
+            Assert.Equal(4, rules.Sum(x => x.Count()));
+            Assert.Equal(2, rules["PublicProperty"].Count());
+            Assert.NotEmpty(rules["PublicProperty"].OfType<RequiredRule>());
+            Assert.NotEmpty(rules["PublicProperty"].OfType<NumericRangeRule>());
 
             // Check attributes properties were retained
-            var stringLengthRule = (StringLengthAttribute)rulesByPropertyName["ReadonlyProperty"].First();
-            Assert.Equal(3, stringLengthRule.MaximumLength);
+            var stringLengthRule = (StringLengthRule)rules["ReadonlyProperty"].First();
+            Assert.Equal(3, stringLengthRule.MaxLength);
             Assert.Equal("Too long", stringLengthRule.ErrorMessage);
-            var emailAddressRule = (DataTypeAttribute) rulesByPropertyName["WriteonlyProperty"].First();
-            Assert.Equal(DataType.EmailAddress, emailAddressRule.DataType);
+            var emailAddressRule = (DataTypeRule) rules["WriteonlyProperty"].First();
+            Assert.Equal(DataTypeRule.DataType.EmailAddress, emailAddressRule.Type);
             Assert.Equal(typeof(TestResources), emailAddressRule.ErrorMessageResourceType);
             Assert.Equal("TestResourceItem", emailAddressRule.ErrorMessageResourceName);
+        }
+
+        [Fact]
+        public void Converts_RequiredAttribute_To_RequiredRule()
+        {
+            TestConversion<RequiredAttribute, RequiredRule>();
+        }
+
+        [Fact] 
+        public void Converts_StringLengthAttribute_To_StringLengthRule()
+        {
+            var rule = TestConversion<StringLengthAttribute, StringLengthRule>(5);
+            Assert.Equal(5, rule.MaxLength);
+            Assert.Null(rule.MinLength);
+        }
+
+        [Fact]
+        public void Converts_RangeAttribute_To_NumericRangeRule()
+        {
+            var rule = TestConversion<RangeAttribute, NumericRangeRule>(3, 6);
+            Assert.Equal(3, rule.Min);
+            Assert.Equal(6, rule.Max);
+        }
+
+        [Fact]
+        public void Converts_DataTypeAttribute_Email_To_DataTypeRule()
+        {
+            var rule = TestConversion<DataTypeAttribute, DataTypeRule>(DataType.EmailAddress);
+            Assert.Equal(DataTypeRule.DataType.EmailAddress, rule.Type);
+        }
+
+        private TRule TestConversion<TAttribute, TRule>(params object[] attributeConstructorParams) where TAttribute: ValidationAttribute where TRule : RuleBase
+        {
+            // Arrange
+            var provider = new DataAnnotationsRuleProvider();
+            Type testType = EmitTestType(typeof(TAttribute), attributeConstructorParams);
+
+            // Act
+            var rules = provider.GetRulesFromType(testType);
+
+            // Assert
+            Assert.Equal(1, rules.Sum(x => x.Count()));
+            var ruleBase = rules["testProperty"].First();
+            Assert.IsType<TRule>(ruleBase);
+            return (TRule)ruleBase;
+        }
+
+        private Type EmitTestType(Type attributeType, object[] attributeConstructorParams)
+        {
+            var assembly = Thread.GetDomain().DefineDynamicAssembly(new AssemblyName("testAssembly"), AssemblyBuilderAccess.Run);
+            var moduleBuilder = assembly.DefineDynamicModule("testModule");
+            var typeBuilder = moduleBuilder.DefineType("testType");
+            var attributeConstructorParamTypes = attributeConstructorParams.Select(x => x.GetType()).ToArray();
+            var customAttributeBuilder = new CustomAttributeBuilder(attributeType.GetConstructor(attributeConstructorParamTypes), attributeConstructorParams);
+            var prop = typeBuilder.DefineProperty("testProperty", PropertyAttributes.None, typeof (string), null);
+            prop.SetCustomAttribute(customAttributeBuilder);
+            var getMethod = typeBuilder.DefineMethod("get_testProperty", MethodAttributes.Public, typeof(string), null);
+            var getMethodILBuilder = getMethod.GetILGenerator();
+            getMethodILBuilder.Emit(OpCodes.Ret);
+            prop.SetGetMethod(getMethod);
+            return typeBuilder.CreateType();
         }
 
         private class TestModel

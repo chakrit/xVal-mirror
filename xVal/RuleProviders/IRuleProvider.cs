@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using xVal.Rules;
 
 namespace xVal.RuleProviders
 {
     public interface IRuleProvider
     {
-        IEnumerable<ValidationRule> GetRulesFromType(Type type);
+        ILookup<string, RuleBase> GetRulesFromType(Type type);
     }
 }

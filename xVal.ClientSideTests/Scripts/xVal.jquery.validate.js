@@ -1,52 +1,55 @@
 ﻿var xVal = xVal || {
     Plugins: {},
-    AttachValidator: function(rulesetName, elementPrefix, pluginName) {
+    AttachValidator: function(elementPrefix, rulesConfig, pluginName) {
         if (pluginName != null)
-            this.Plugins[pluginName].AttachValidator(rulesetName, elementPrefix);
+            this.Plugins[pluginName].AttachValidator(elementPrefix, rulesConfig);
         else
             for (var key in this.Plugins) {
-                this.Plugins[key].AttachValidator(rulesetName, elementPrefix);
+                this.Plugins[key].AttachValidator(elementPrefix, rulesConfig);
                 return;
             }
     }
 };
 
 xVal.Plugins["jquery.validate"] = {
-    AttachValidator: function(rulesetName, elementPrefix) {
-        var self = this;
-        var rulesets = $("*[name=" + rulesetName + "]")
-                       .filter(function() { return this.tagName == "XVAL:RULESET"; });
-        rulesets.each(function() {
-            $("*[forfield]", $(this)).each(function() {
-                // Attach this rule to a DOM element, if we can find one
-                var rule = $(this);
-                var correspondingId = (elementPrefix ? elementPrefix + "." : "") + rule.attr("forfield");
-                var correspondingElement = $("#" + correspondingId);
-                if (correspondingElement)
-                    self._attachRuleToDOMElement(rule, correspondingElement);
-            });
-        });
+    AttachValidator: function(elementPrefix, rulesConfig) {
+        for (var i = 0; i < rulesConfig.Fields.length; i++) {
+            var fieldName = rulesConfig.Fields[i].FieldName;
+            var fieldRules = rulesConfig.Fields[i].FieldRules;
+
+            // Is there a matching DOM element?
+            var elemId = (elementPrefix ? elementPrefix + "." : "") + fieldName;
+            var elem = document.getElementById(elemId);
+
+            if (elem) {
+                for (var j = 0; j < fieldRules.length; j++) {
+                    var ruleName = fieldRules[j].RuleName;
+                    var ruleParams = fieldRules[j].RuleParameters;
+                    this._attachRuleToDOMElement(ruleName, ruleParams, $(elem));
+                }
+            }
+        }
     },
 
-    _attachRuleToDOMElement: function(rule, element) {
+    _attachRuleToDOMElement: function(ruleName, ruleParams, element) {
         var parentForm = element.parents("form");
         if (parentForm.length != 1)
             alert("Error: Element " + element.attr("id") + " is not in a form");
         this._ensureFormIsMarkedForValidation(parentForm[0]);
         this._associateNearbyValidationMessageSpanWithElement(element);
 
-        switch (rule[0].tagName) {
-            case "REQUIRED":
+        switch (ruleName) {
+            case "Required":
                 element.rules("add", { required: true });
                 break;
 
-            case "NUMERICRANGE":
-                if (typeof (rule.attr("min")) == 'undefined')
-                    element.rules("add", { max: rule.attr("max") });
-                else if (typeof (rule.attr("max")) == 'undefined')
-                    element.rules("add", { min: rule.attr("min") });
+            case "NumericRange":
+                if (typeof (ruleParams.Min) == 'undefined')
+                    element.rules("add", { max: ruleParams.Max });
+                else if (typeof (ruleParams.Max) == 'undefined')
+                    element.rules("add", { min: ruleParams.Min });
                 else
-                    element.rules("add", { range: [rule.attr("min"), rule.attr("max")] });
+                    element.rules("add", { range: [ruleParams.Min, ruleParams.Max] });
                 break;
         }
     },

@@ -15,7 +15,7 @@ namespace xVal.Tests.HtmlHelpers
         [Fact]
         public void ClientSideValidation_Extends_HtmlHelper()
         {
-            Action<HtmlHelper> test = x => x.ClientSideValidationRules(Moq.It.IsAny<Type>(), "myrules");
+            Action<HtmlHelper> test = x => x.ClientSideValidationRules(Moq.It.IsAny<Type>());
         }
 
         [Fact]
@@ -25,12 +25,12 @@ namespace xVal.Tests.HtmlHelpers
             var arbitraryType = typeof(DateTime);
             var html = new HtmlHelperMocks<object>().HtmlHelper;
             var mockFormatter = new Moq.Mock<IValidationConfigFormatter>(MockBehavior.Strict);
-            mockFormatter.Expect(x => x.FormatRules(It.IsAny<RuleSet>(), "myprop"))
+            mockFormatter.Expect(x => x.FormatRules(It.IsAny<RuleSet>()))
                 .Returns("ok");
             ValidationHelpers.Formatter = mockFormatter.Object;
 
             // Act
-            var result = html.ClientSideValidationRules(arbitraryType, "myprop");
+            var result = html.ClientSideValidationRules(arbitraryType);
 
             // Assert
             Assert.Equal("ok", result);
@@ -51,23 +51,20 @@ namespace xVal.Tests.HtmlHelpers
             // Capture params passed to mockFormatter
             var mockFormatter = new Moq.Mock<IValidationConfigFormatter>(MockBehavior.Strict);
             RuleSet passedRules = null;
-            string passedPrefix = null;
-            Action<RuleSet, string> callback = (x, y) =>
+            Action<RuleSet> callback = x =>
             {
-                passedPrefix = y;
                 passedRules = x;
             };
-            mockFormatter.Expect(x => x.FormatRules(It.IsAny<RuleSet>(), It.IsAny<string>()))
+            mockFormatter.Expect(x => x.FormatRules(It.IsAny<RuleSet>()))
                 .Callback(callback)
                 .Returns("ok");
             ValidationHelpers.Formatter = mockFormatter.Object;
 
             // Act
-            var result = html.ClientSideValidationRules(arbitraryType, "my.lovely.rules");
+            var result = html.ClientSideValidationRules(arbitraryType);
 
             // Assert
             Assert.Equal("ok", result);
-            Assert.Equal("my.lovely.rules", passedPrefix);
             Assert.Equal(1, passedRules.Keys.Count());
             Assert.Same(rules["someProperty"].Single(), passedRules["someProperty"].First());
         }

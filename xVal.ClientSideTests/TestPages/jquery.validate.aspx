@@ -9,10 +9,9 @@
     </head>
     <body>
         <% Html.RenderPartial("~/TestPages/PersonForm.ascx"); %>
-        <%= Html.ClientSideValidationRules<Person>("personRules") %>
-        
         <script type="text/javascript">
-            xVal.AttachValidator("personRules", "");
+            var rules = <%= Html.ClientSideValidationRules<Person>() %>;
+            xVal.AttachValidator("person", rules);
         </script>
     </body>
 </html>

@@ -38,6 +38,9 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Web.Extensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -52,7 +55,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActiveRuleProviders.cs" />
-    <Compile Include="Html\DefaultValidationConfigFormatter.cs" />
+    <Compile Include="Html\JsonValidationConfigFormatter.cs" />
+    <Compile Include="Html\XmlValidationConfigFormatter.cs" />
     <Compile Include="Html\IValidationConfigFormatter.cs" />
     <Compile Include="Html\ValidationHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -6,6 +6,6 @@ namespace xVal.Html
 {
     public interface IValidationConfigFormatter
     {
-        string FormatRules(RuleSet rules, string rulesetName);
+        string FormatRules(RuleSet rules);
     }
 }

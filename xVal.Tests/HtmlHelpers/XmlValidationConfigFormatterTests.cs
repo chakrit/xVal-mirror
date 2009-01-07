@@ -5,30 +5,31 @@ using xVal.Html;
 using xVal.RuleProviders;
 using xVal.Rules;
 using System.Linq;
+using xVal.Tests.TestHelpers;
 
 namespace xVal.Tests.HtmlHelpers
 {
-    public class DefaultValidationConfigFormatterTests
+    public class XmlValidationConfigFormatterTests
     {
         [Fact]
         public void Empty_Ruleset_Formatted_With_Name()
         {
             // Arrange
-            var formatter = new DefaultValidationConfigFormatter();
+            var formatter = new XmlValidationConfigFormatter();
 
             // Act
-            var result = formatter.FormatRules(RuleSet.Empty, "myname");
+            var result = formatter.FormatRules(RuleSet.Empty);
 
             // Assert
-            Assert.Equal("<xval:ruleset name=\"myname\" />", result);
+            Assert.Equal("<xval:ruleset />", result);
         }
 
         [Fact]
         public void Single_Rule()
         {
             // Arrange
-            var formatter = new DefaultValidationConfigFormatter();
-            var rules = MakeTestRuleSet(new Dictionary<string, IDictionary<string, object>> {
+            var formatter = new XmlValidationConfigFormatter();
+            var rules = RuleSetHelpers.MakeTestRuleSet(new Dictionary<string, IDictionary<string, object>> {
                 { 
                     "myprop", new Dictionary<string, object> {
                         { "somerule", new { param1 = "param1value", param2 = "param2value" } }    
@@ -37,10 +38,10 @@ namespace xVal.Tests.HtmlHelpers
             });
 
             // Act
-            var result = formatter.FormatRules(rules, "myname");
+            var result = formatter.FormatRules(rules);
 
             // Assert
-            Assert.Equal(@"<xval:ruleset name=""myname"">
+            Assert.Equal(@"<xval:ruleset>
     <somerule forfield=""myprop"" param1=""param1value"" param2=""param2value"" />
 </xval:ruleset>", result);
         }
@@ -49,8 +50,8 @@ namespace xVal.Tests.HtmlHelpers
         public void Multiple_Rules()
         {
             // Arrange
-            var formatter = new DefaultValidationConfigFormatter();
-            var rules = MakeTestRuleSet(new Dictionary<string, IDictionary<string, object>> {
+            var formatter = new XmlValidationConfigFormatter();
+            var rules = RuleSetHelpers.MakeTestRuleSet(new Dictionary<string, IDictionary<string, object>> {
                 { 
                     "screenplay", new Dictionary<string, object> {
                         { "copyright", new { author = "Wm. Shakespeare", year = "1668" } },
@@ -67,13 +68,13 @@ namespace xVal.Tests.HtmlHelpers
             });
 
             // Act
-            var result = formatter.FormatRules(rules, "somerules");
+            var result = formatter.FormatRules(rules);
 
             // Assert
             // Notice that the attributes are re-ordered (into alphabetical order)
             // This test code is a bit flaky because the attributes could be ordered differently in future
             // Not sure if there's a better way to test this (maybe will parse the output as XML then inspect independently of order)
-            Assert.Equal(@"<xval:ruleset name=""somerules"">
+            Assert.Equal(@"<xval:ruleset>
     <copyright author=""Wm. Shakespeare"" forfield=""screenplay"" year=""1668"" />
     <description forfield=""screenplay"" grammar=""perfect"" language=""Welsh"" length=""long"" />
     <required forfield=""petname"" />
@@ -82,28 +83,5 @@ namespace xVal.Tests.HtmlHelpers
 </xval:ruleset>", result);
         }
 
-        // Utility function to give a quick syntax for instantiating a complete RuleSet
-        private RuleSet MakeTestRuleSet(IDictionary<string, IDictionary<string, object>> data)
-        {
-            var rules = from propName in data.Keys
-                        from ruleName in data[propName].Keys
-                        select new { propName, rule = (RuleBase) new TestRule(ruleName, data[propName][ruleName]) };
-            return new RuleSet(rules.ToLookup(x => x.propName, x => x.rule));
-        }
-
-        private class TestRule : RuleBase
-        {
-            public IDictionary<string, string> Parameters { get; set; }
-
-            public TestRule(string ruleName, object parameters) : base(ruleName)
-            {
-                Parameters = new RouteValueDictionary(parameters).ToDictionary(x => x.Key, x => x.Value.ToString());
-            }
-
-            public override IDictionary<string, string> ListParameters()
-            {
-                return Parameters;
-            }
-        }
     }
 }

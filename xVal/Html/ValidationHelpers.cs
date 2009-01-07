@@ -6,18 +6,17 @@ namespace xVal.Html
 {
     public static class ValidationHelpers
     {
-        public static IValidationConfigFormatter Formatter = new DefaultValidationConfigFormatter();
+        public static IValidationConfigFormatter Formatter = new JsonValidationConfigFormatter();
 
-        public static string ClientSideValidationRules(this HtmlHelper html, Type modelType, string rulesetName)
+        public static string ClientSideValidationRules(this HtmlHelper html, Type modelType)
         {
             if (modelType == null) throw new ArgumentNullException("modelType");
-            if (string.IsNullOrEmpty(rulesetName)) throw new ArgumentException("rulesetName");
-            return Formatter.FormatRules(ActiveRuleProviders.GetRulesForType(modelType), rulesetName);
+            return Formatter.FormatRules(ActiveRuleProviders.GetRulesForType(modelType));
         }
 
-        public static string ClientSideValidationRules<TModel>(this HtmlHelper html, string rulesetName)
+        public static string ClientSideValidationRules<TModel>(this HtmlHelper html)
         {
-            return ClientSideValidationRules(html, typeof(TModel), rulesetName);
+            return ClientSideValidationRules(html, typeof(TModel));
         }
     }
 }

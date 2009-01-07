@@ -63,7 +63,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HtmlHelpers\DefaultValidationConfigFormatterTests.cs" />
+    <Compile Include="HtmlHelpers\JsonValidationConfigFormatterTests.cs" />
+    <Compile Include="HtmlHelpers\XmlValidationConfigFormatterTests.cs" />
     <Compile Include="Rules\RulesTests.cs" />
     <Compile Include="TestHelpers\HtmlHelperMocks.cs" />
     <Compile Include="HtmlHelpers\HtmlHelpersTests.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="RuleProviders\DataAnnotationsRuleProviderTests.cs" />
     <Compile Include="RuleProviders\IRuleProviderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestHelpers\RuleSetHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\xVal\xVal.csproj">

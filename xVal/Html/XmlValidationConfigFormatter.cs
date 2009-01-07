@@ -7,16 +7,15 @@ using xVal.Rules;
 
 namespace xVal.Html
 {
-    public class DefaultValidationConfigFormatter : IValidationConfigFormatter
+    public class XmlValidationConfigFormatter : IValidationConfigFormatter
     {
         private const string TagName = "xval:ruleset";
         private const string NewLine = "\r\n";
         private const string Indent = "    ";
 
-        public string FormatRules(RuleSet rules, string rulesetName)
+        public string FormatRules(RuleSet rules)
         {
             var tb = new TagBuilder(TagName);
-            tb.MergeAttribute("name", rulesetName);
             var rulesBuilder = new StringBuilder();
             var allRules = from key in rules.Keys
                            from rule in rules[key]

@@ -43,7 +43,7 @@ namespace xVal.RuleProviders
             throw new InvalidOperationException("Unknown validation attribute type: " + att.GetType().FullName);
         }
 
-        private DataTypeRule.DataType ToXValDataType(DataType type)
+        private static DataTypeRule.DataType ToXValDataType(DataType type)
         {
             switch(type) {
                 case DataType.EmailAddress:

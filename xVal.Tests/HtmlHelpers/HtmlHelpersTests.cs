@@ -86,8 +86,8 @@ namespace xVal.Tests.HtmlHelpers
             // Assert
             Assert.Equal("ok", result);
             Assert.Equal("blah[3].subprop.", passedPrefix);
-            Assert.Equal(1, passedRules.Count);
-            Assert.Same(rules["someProperty"].First(), passedRules["someProperty"].First());
+            Assert.Equal(1, passedRules.Keys.Count());
+            Assert.Same(rules["someProperty"].Single(), passedRules["someProperty"].First());
         }
     }
 }

@@ -28,7 +28,7 @@ namespace xVal.Tests.RuleProviders
             var rules = provider.GetRulesFromType(typeof (TestModel));
 
             // Assert the right set of rules were found
-            Assert.Equal(4, rules.Sum(x => x.Count()));
+            Assert.Equal(3, rules.Keys.Count());
             Assert.Equal(2, rules["PublicProperty"].Count());
             Assert.NotEmpty(rules["PublicProperty"].OfType<RequiredRule>());
             Assert.NotEmpty(rules["PublicProperty"].OfType<NumericRangeRule>());
@@ -82,8 +82,8 @@ namespace xVal.Tests.RuleProviders
             var rules = provider.GetRulesFromType(testType);
 
             // Assert
-            Assert.Equal(1, rules.Sum(x => x.Count()));
-            var ruleBase = rules["testProperty"].First();
+            Assert.Equal(1, rules.Keys.Count());
+            var ruleBase = rules["testProperty"].Single();
             Assert.IsType<TRule>(ruleBase);
             return (TRule)ruleBase;
         }

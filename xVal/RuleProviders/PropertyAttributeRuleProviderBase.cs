@@ -13,7 +13,7 @@ namespace xVal.RuleProviders
             // Todo: Consider supporting ICustomAttributeProvider
             var rules = (from prop in type.GetProperties()
                          from att in prop.GetCustomAttributes(typeof (TAttribute), true).OfType<TAttribute>()
-                         select new { prop.Name, att }).ToLookup(x => x.Name, x => MakeValidationRuleFromAttribute(x.att));
+                         select new KeyValuePair<string, RuleBase>(prop.Name, MakeValidationRuleFromAttribute(att)));
             return new RuleSet(rules);
         }
 

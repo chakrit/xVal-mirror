@@ -6,7 +6,7 @@ using Moq;
 namespace xVal.Tests.TestHelpers
 {
     /// <summary>
-    /// Just sets up enough context to get a HtmlHelper object (so you can call, e.g., html.ValidationMessage())
+    /// Just sets up enough context to get a HtmlHelper object (so you can call, e.g., html.ClientSideValidation())
     /// </summary>
     /// <typeparam name="TModel">The type parameter used for ViewData</typeparam>
     internal class HtmlHelperMocks<TModel> where TModel: class 

@@ -25,7 +25,7 @@ namespace xVal.Tests.HtmlHelpers
             var arbitraryType = typeof (DateTime);
             var html = new HtmlHelperMocks<object>().HtmlHelper;
             var mockFormatter = new Moq.Mock<IValidationConfigFormatter>(MockBehavior.Strict);
-            mockFormatter.Expect(x => x.FormatRules(It.IsAny<ILookup<string, RuleBase>>(), null))
+            mockFormatter.Expect(x => x.FormatRules(It.IsAny<RuleSet>(), null))
                 .Returns("ok");
             ValidationHelpers.Formatter = mockFormatter.Object;
 
@@ -43,7 +43,7 @@ namespace xVal.Tests.HtmlHelpers
             var arbitraryType = typeof(DateTime);
             var html = new HtmlHelperMocks<object>().HtmlHelper;
             var mockFormatter = new Moq.Mock<IValidationConfigFormatter>(MockBehavior.Strict);
-            mockFormatter.Expect(x => x.FormatRules(It.IsAny<ILookup<string, RuleBase>>(), "myprop."))
+            mockFormatter.Expect(x => x.FormatRules(It.IsAny<RuleSet>(), "myprop."))
                 .Returns("ok");
             ValidationHelpers.Formatter = mockFormatter.Object;
 
@@ -61,20 +61,21 @@ namespace xVal.Tests.HtmlHelpers
             var html = new HtmlHelperMocks<object>().HtmlHelper;
             var arbitraryType = typeof (DateTime);
             var ruleProvider = new Moq.Mock<IRuleProvider>();
-            var rules = new[] { "someProperty" }.ToLookup(x => x, x => (RuleBase)new RequiredRule());
+            var rules = new RuleSet(new[] { "someProperty" }.ToLookup(x => x, x => (RuleBase)new RequiredRule()));
             ruleProvider.Expect(x => x.GetRulesFromType(arbitraryType)).Returns(rules);
             ActiveRuleProviders.Providers.Clear();
             ActiveRuleProviders.Providers.Add(ruleProvider.Object);
 
             // Capture params passed to mockFormatter
             var mockFormatter = new Moq.Mock<IValidationConfigFormatter>(MockBehavior.Strict);
-            ILookup<string, RuleBase> passedRules = null;
+            RuleSet passedRules = null;
             string passedPrefix = null;
-            Action<ILookup<string, RuleBase>, string> callback = (x, y) => {
+            Action<RuleSet, string> callback = (x, y) =>
+            {
                 passedPrefix = y;
                 passedRules = x;
             };
-            mockFormatter.Expect(x => x.FormatRules(It.IsAny<ILookup<string, RuleBase>>(), It.IsAny<string>()))
+            mockFormatter.Expect(x => x.FormatRules(It.IsAny<RuleSet>(), It.IsAny<string>()))
                 .Callback(callback)
                 .Returns("ok");
             ValidationHelpers.Formatter = mockFormatter.Object;

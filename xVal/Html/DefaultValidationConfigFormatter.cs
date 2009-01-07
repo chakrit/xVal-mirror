@@ -1,11 +1,12 @@
 using System.Linq;
+using xVal.RuleProviders;
 using xVal.Rules;
 
 namespace xVal.Html
 {
-    internal class DefaultValidationConfigFormatter : IValidationConfigFormatter
+    public class DefaultValidationConfigFormatter : IValidationConfigFormatter
     {
-        public string FormatRules(ILookup<string, RuleBase> rules, string prefix)
+        public string FormatRules(RuleSet rules, string rulesetName)
         {
             return null;
         }

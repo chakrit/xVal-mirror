@@ -11,13 +11,6 @@ namespace xVal.Tests.RuleProviders
     public class ActiveRuleProvidersTests
     {
         [Fact]
-        public void Providers_Has_Only_DataAnnotationsRuleProvider_By_Default()
-        {
-            Assert.Equal(1, ActiveRuleProviders.Providers.Count);
-            Assert.IsType<DataAnnotationsRuleProvider>(ActiveRuleProviders.Providers[0]);
-        }
-
-        [Fact]
         public void GetRulesForType_Concatenates_Output_From_All_Providers()
         {
             // Arrange
@@ -52,7 +45,7 @@ namespace xVal.Tests.RuleProviders
             // Arrange
             var mockProvider = new Moq.Mock<IRuleProvider>();
             mockProvider.Expect(x => x.GetRulesFromType(typeof(double)))
-                        .Returns((ILookup<string, RuleBase>)null);
+                        .Returns((RuleSet)null);
             ActiveRuleProviders.Providers.Clear();
             ActiveRuleProviders.Providers.Add(mockProvider.Object);
 
@@ -66,7 +59,7 @@ namespace xVal.Tests.RuleProviders
 
         private static IRuleProvider MakeMockRuleProvider(Type forModelType, params string[] rulePropertyNames)
         {
-            var ruleset = rulePropertyNames.ToLookup(x => x, x => (RuleBase)new RequiredRule());
+            var ruleset = new RuleSet(rulePropertyNames.ToLookup(x => x, x => (RuleBase)new RequiredRule()));
             var mockProvider = new Moq.Mock<IRuleProvider>();
             mockProvider.Expect(x => x.GetRulesFromType(forModelType)).Returns(ruleset);
             return mockProvider.Object;

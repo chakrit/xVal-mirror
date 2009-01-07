@@ -17,15 +17,14 @@ namespace xVal.Tests.RuleProviders
             // Arrange
             var arbitraryType = this.GetType();
             var mockRuleProvider = new Moq.Mock<IRuleProvider>();
-            var expectedResult = new[] { 1 }.ToLookup(x => "prop", x => (RuleBase)new RequiredRule());
             mockRuleProvider.Expect(x => x.GetRulesFromType(arbitraryType))
-                            .Returns(expectedResult);
+                            .Returns(RuleSet.Empty);
 
             // Act
             var actualResult = mockRuleProvider.Object.GetRulesFromType(arbitraryType);
 
             // Assert
-            Assert.Same(expectedResult, actualResult);
+            Assert.Same(RuleSet.Empty, actualResult);
         }
     }
 }

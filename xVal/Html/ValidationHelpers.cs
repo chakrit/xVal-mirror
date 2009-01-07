@@ -8,25 +8,16 @@ namespace xVal.Html
     {
         public static IValidationConfigFormatter Formatter = new DefaultValidationConfigFormatter();
 
-        public static string ClientSideValidation(this HtmlHelper html, Type modelType)
+        public static string ClientSideValidationRules(this HtmlHelper html, Type modelType, string rulesetName)
         {
-            return ClientSideValidation(html, modelType, null);
+            if (modelType == null) throw new ArgumentNullException("modelType");
+            if (string.IsNullOrEmpty(rulesetName)) throw new ArgumentException("rulesetName");
+            return Formatter.FormatRules(ActiveRuleProviders.GetRulesForType(modelType), rulesetName);
         }
 
-        public static string ClientSideValidation(this HtmlHelper html, Type modelType, string modelName)
+        public static string ClientSideValidationRules<TModel>(this HtmlHelper html, string rulesetName)
         {
-            string prefix = modelName == null ? null : modelName + ".";
-            return Formatter.FormatRules(ActiveRuleProviders.GetRulesForType(modelType), prefix);
-        }
-
-        public static string ClientSideValidation<TModel>(this HtmlHelper html)
-        {
-            return ClientSideValidation(html, typeof(TModel), null);
-        }
-
-        public static string ClientSideValidation<TModel>(this HtmlHelper html, string modelName)
-        {
-            return ClientSideValidation(html, typeof(TModel), modelName);
+            return ClientSideValidationRules(html, typeof(TModel), rulesetName);
         }
     }
 }

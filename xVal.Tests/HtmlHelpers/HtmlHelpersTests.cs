@@ -15,40 +15,22 @@ namespace xVal.Tests.HtmlHelpers
         [Fact]
         public void ClientSideValidation_Extends_HtmlHelper()
         {
-            Action<HtmlHelper> test = x => x.ClientSideValidation(Moq.It.IsAny<Type>());
+            Action<HtmlHelper> test = x => x.ClientSideValidationRules(Moq.It.IsAny<Type>(), "myrules");
         }
 
         [Fact]
-        public void ClientSideValidation_Helper_Passes_Null_PropertyName_To_Formatter()
-        {
-            // Arrange
-            var arbitraryType = typeof (DateTime);
-            var html = new HtmlHelperMocks<object>().HtmlHelper;
-            var mockFormatter = new Moq.Mock<IValidationConfigFormatter>(MockBehavior.Strict);
-            mockFormatter.Expect(x => x.FormatRules(It.IsAny<RuleSet>(), null))
-                .Returns("ok");
-            ValidationHelpers.Formatter = mockFormatter.Object;
-
-            // Act
-            var result = html.ClientSideValidation(arbitraryType, null);
-
-            // Assert
-            Assert.Equal("ok", result);
-        }
-
-        [Fact]
-        public void ClientSideValidation_Helper_Passes_NonNull_PropertyName_Plus_Dot_To_Formatter()
+        public void ClientSideValidation_Helper_Passes_Ruleset_Name_To_Formatter()
         {
             // Arrange
             var arbitraryType = typeof(DateTime);
             var html = new HtmlHelperMocks<object>().HtmlHelper;
             var mockFormatter = new Moq.Mock<IValidationConfigFormatter>(MockBehavior.Strict);
-            mockFormatter.Expect(x => x.FormatRules(It.IsAny<RuleSet>(), "myprop."))
+            mockFormatter.Expect(x => x.FormatRules(It.IsAny<RuleSet>(), "myprop"))
                 .Returns("ok");
             ValidationHelpers.Formatter = mockFormatter.Object;
 
             // Act
-            var result = html.ClientSideValidation(arbitraryType, "myprop");
+            var result = html.ClientSideValidationRules(arbitraryType, "myprop");
 
             // Assert
             Assert.Equal("ok", result);
@@ -81,11 +63,11 @@ namespace xVal.Tests.HtmlHelpers
             ValidationHelpers.Formatter = mockFormatter.Object;
 
             // Act
-            var result = html.ClientSideValidation(arbitraryType, "blah[3].subprop");
+            var result = html.ClientSideValidationRules(arbitraryType, "my.lovely.rules");
 
             // Assert
             Assert.Equal("ok", result);
-            Assert.Equal("blah[3].subprop.", passedPrefix);
+            Assert.Equal("my.lovely.rules", passedPrefix);
             Assert.Equal(1, passedRules.Keys.Count());
             Assert.Same(rules["someProperty"].Single(), passedRules["someProperty"].First());
         }

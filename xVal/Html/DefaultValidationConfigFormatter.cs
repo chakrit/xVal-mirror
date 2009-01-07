@@ -9,7 +9,7 @@ namespace xVal.Html
 {
     public class DefaultValidationConfigFormatter : IValidationConfigFormatter
     {
-        private const string TagName = "ruleset";
+        private const string TagName = "xval:ruleset";
         private const string NewLine = "\r\n";
         private const string Indent = "    ";
 
@@ -17,7 +17,6 @@ namespace xVal.Html
         {
             var tb = new TagBuilder(TagName);
             tb.MergeAttribute("name", rulesetName);
-
             var rulesBuilder = new StringBuilder();
             var allRules = from key in rules.Keys
                            from rule in rules[key]

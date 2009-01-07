@@ -10,5 +10,13 @@ namespace xVal.Rules
             Min = min;
             Max = max;
         }
+
+        public override System.Collections.Generic.IDictionary<string, string> ListParameters()
+        {
+            var result = base.ListParameters();
+            if (Min.HasValue) result.Add("Min", Min.ToString());
+            if (Max.HasValue) result.Add("Max", Max.ToString());
+            return result;
+        }
     }
 }

@@ -21,5 +21,15 @@ namespace xVal.Tests.Rules
             Assert.Equal("1", parameters["MinLength"]);
             Assert.Equal("5", parameters["MaxLength"]);
         }
+
+        [Fact]
+        public void NumericRangeRule_Take_Min_And_Max()
+        {
+            var rule = new NumericRangeRule(1, 5);
+            var parameters = rule.ListParameters();
+            Assert.Equal(2, parameters.Count);
+            Assert.Equal("1", parameters["Min"]);
+            Assert.Equal("5", parameters["Max"]);
+        }
     }
 }

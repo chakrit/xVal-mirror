@@ -20,7 +20,7 @@ namespace xVal.Tests.HtmlHelpers
             var result = formatter.FormatRules(RuleSet.Empty, "myname");
 
             // Assert
-            Assert.Equal("<ruleset name=\"myname\" />", result);
+            Assert.Equal("<xval:ruleset name=\"myname\" />", result);
         }
 
         [Fact]
@@ -40,9 +40,9 @@ namespace xVal.Tests.HtmlHelpers
             var result = formatter.FormatRules(rules, "myname");
 
             // Assert
-            Assert.Equal(@"<ruleset name=""myname"">
+            Assert.Equal(@"<xval:ruleset name=""myname"">
     <somerule forfield=""myprop"" param1=""param1value"" param2=""param2value"" />
-</ruleset>", result);
+</xval:ruleset>", result);
         }
 
         [Fact]
@@ -73,13 +73,13 @@ namespace xVal.Tests.HtmlHelpers
             // Notice that the attributes are re-ordered (into alphabetical order)
             // This test code is a bit flaky because the attributes could be ordered differently in future
             // Not sure if there's a better way to test this (maybe will parse the output as XML then inspect independently of order)
-            Assert.Equal(@"<ruleset name=""somerules"">
+            Assert.Equal(@"<xval:ruleset name=""somerules"">
     <copyright author=""Wm. Shakespeare"" forfield=""screenplay"" year=""1668"" />
     <description forfield=""screenplay"" grammar=""perfect"" language=""Welsh"" length=""long"" />
     <required forfield=""petname"" />
     <DataType domainSuffix="".co.uk"" forfield=""petname"" type=""EmailAddress"" />
     <LengthConstraint forfield=""petname"" max=""150"" />
-</ruleset>", result);
+</xval:ruleset>", result);
         }
 
         // Utility function to give a quick syntax for instantiating a complete RuleSet

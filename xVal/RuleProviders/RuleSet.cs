@@ -6,7 +6,7 @@ using xVal.Rules;
 
 namespace xVal.RuleProviders
 {
-    public class RuleSet : IEnumerable<KeyValuePair<string, RuleBase>>
+    public class RuleSet
     {
         public static readonly RuleSet Empty = new RuleSet(new object[] { }.ToLookup(x => (string) null, x => (RuleBase) null));
 
@@ -18,22 +18,14 @@ namespace xVal.RuleProviders
             this.rules = rules;
         }
 
-        public RuleSet(IEnumerable<KeyValuePair<string, RuleBase>> rules)
+        public RuleSet(IEnumerable<RuleSet> rulesetsToMerge)
         {
-            if (rules == null) throw new ArgumentNullException("rules");
-            this.rules = rules.ToLookup(x => x.Key, x => x.Value);
-        }
-
-        public IEnumerator<KeyValuePair<string, RuleBase>> GetEnumerator()
-        {
-            return (from grp in rules
-                   from rule in grp
-                   select new KeyValuePair<string, RuleBase>(grp.Key, rule)).GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
+            if (rulesetsToMerge == null) throw new ArgumentNullException("rulesetsToMerge");
+            var allRules = (from set in rulesetsToMerge
+                            from key in set.Keys
+                            from rule in set[key]
+                            select new { key, rule });
+            rules = allRules.ToLookup(x => x.key, x => x.rule);
         }
 
         public bool Contains(string key)

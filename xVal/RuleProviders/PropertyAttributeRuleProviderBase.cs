@@ -14,7 +14,7 @@ namespace xVal.RuleProviders
             var rules = (from prop in type.GetProperties()
                          from att in prop.GetCustomAttributes(typeof (TAttribute), true).OfType<TAttribute>()
                          select new KeyValuePair<string, RuleBase>(prop.Name, MakeValidationRuleFromAttribute(att)));
-            return new RuleSet(rules);
+            return new RuleSet(rules.ToLookup(x => x.Key, x => x.Value));
         }
 
         protected abstract RuleBase MakeValidationRuleFromAttribute(TAttribute att);

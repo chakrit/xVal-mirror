@@ -27,16 +27,17 @@ namespace xVal.Tests.RuleProviders
             ActiveRuleProviders.Providers.Add(mockProvider4);
 
             // Act
-            var rules = ActiveRuleProviders.GetRulesForType(arbitraryType).ToList();
+            var rules = ActiveRuleProviders.GetRulesForType(arbitraryType);
 
             // Assert
-            Assert.Equal(6, rules.Count);
-            Assert.Equal("prop1a", rules[0].Key);
-            Assert.Equal("prop1b", rules[1].Key);
-            Assert.Equal("prop2", rules[2].Key);
-            Assert.Equal("prop3a", rules[3].Key);
-            Assert.Equal("prop3b", rules[4].Key);
-            Assert.Equal("prop3c", rules[5].Key);
+            var totalNumberOfRules = rules.Keys.Sum(x => rules[x].Count());
+            Assert.Equal(6, totalNumberOfRules);
+            Assert.NotEmpty("prop1a");
+            Assert.NotEmpty("prop1b");
+            Assert.NotEmpty("prop2");
+            Assert.NotEmpty("prop3a");
+            Assert.NotEmpty("prop3b");
+            Assert.NotEmpty("prop3c");
         }
 
         [Fact]
@@ -54,7 +55,7 @@ namespace xVal.Tests.RuleProviders
 
             // Assert
             Assert.NotNull(rules);
-            Assert.Empty(rules);
+            Assert.Empty(rules.Keys);
         }
 
         private static IRuleProvider MakeMockRuleProvider(Type forModelType, params string[] rulePropertyNames)

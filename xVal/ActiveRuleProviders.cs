@@ -14,8 +14,9 @@ namespace xVal
 
         public static RuleSet GetRulesForType(Type type)
         {
-            var rules = Providers.SelectMany(x => x.GetRulesFromType(type) ?? RuleSet.Empty);
-            return new RuleSet(rules);
+            var allRuleSets = from p in Providers
+                              select p.GetRulesFromType(type) ?? RuleSet.Empty;
+            return new RuleSet(allRuleSets);
         }
     }
 }

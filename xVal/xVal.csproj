@@ -64,7 +64,6 @@
     <Compile Include="RuleProviders\IRuleProvider.cs" />
     <Compile Include="RuleProviders\PropertyAttributeRuleProviderBase.cs" />
     <Compile Include="RuleProviders\RuleSet.cs" />
-    <Compile Include="Rules\DataType.cs" />
     <Compile Include="Rules\DataTypeRule.cs" />
     <Compile Include="Rules\RangeRule.cs" />
     <Compile Include="Rules\RegularExpressionRule.cs" />

@@ -8,9 +8,20 @@
         <script type="text/javascript" src="<%= ResolveUrl("~/Plugins/jQuery.Validate/xVal.jquery.validate.js?nocache=" + DateTime.Now.Ticks) %>"></script>
     </head>
     <body>
-        <% Html.RenderPartial("~/TestHelpers/PersonForm.ascx"); %>
+        <% using(Html.BeginForm()) { %>
+            <table border="0">
+                <% foreach(var fieldName in SampleRuleSets.AllPossibleRules.Keys) { %>
+                    <tr>
+                        <td><%= fieldName %></td>
+                        <td><%= Html.TextBox("myprefix." + fieldName) %></td>
+                    </tr>
+                <% } %>
+            </table>
+            <input type="submit" />
+        <% } %>
+        
         <script type="text/javascript">
-            xVal.AttachValidator("person", <%= Html.ClientSideValidationRules(SampleRuleSets.Person) %>);
+            xVal.AttachValidator("myprefix", <%= Html.ClientSideValidationRules(SampleRuleSets.AllPossibleRules) %>);
         </script>
     </body>
 </html>

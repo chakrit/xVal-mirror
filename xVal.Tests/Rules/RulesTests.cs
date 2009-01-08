@@ -38,9 +38,10 @@ namespace xVal.Tests.Rules
         {
             var rule = new RangeRule(1, 5);
             var parameters = rule.ListParameters();
-            Assert.Equal(2, parameters.Count);
+            Assert.Equal(3, parameters.Count);
             Assert.Equal("1", parameters["Min"]);
             Assert.Equal("5", parameters["Max"]);
+            Assert.Equal("integer", parameters["Type"]);
         }
 
         [Fact]
@@ -48,9 +49,10 @@ namespace xVal.Tests.Rules
         {
             var rule = new RangeRule(1.2m, 5.4m);
             var parameters = rule.ListParameters();
-            Assert.Equal(2, parameters.Count);
+            Assert.Equal(3, parameters.Count);
             Assert.Equal("1.2", parameters["Min"]);
             Assert.Equal("5.4", parameters["Max"]);
+            Assert.Equal("decimal", parameters["Type"]);
         }
 
         [Fact]
@@ -58,9 +60,10 @@ namespace xVal.Tests.Rules
         {
             var rule = new RangeRule("abc", "xyz");
             var parameters = rule.ListParameters();
-            Assert.Equal(2, parameters.Count);
+            Assert.Equal(3, parameters.Count);
             Assert.Equal("abc", parameters["Min"]);
             Assert.Equal("xyz", parameters["Max"]);
+            Assert.Equal("string", parameters["Type"]);
         }
 
         [Fact]
@@ -68,7 +71,7 @@ namespace xVal.Tests.Rules
         {
             var rule = new RangeRule(new DateTime(2001,10, 20, 01, 02, 03), new DateTime(2003, 3, 5));
             var parameters = rule.ListParameters();
-            Assert.Equal(12, parameters.Count);
+            Assert.Equal(13, parameters.Count);
             Assert.Equal("2001", parameters["MinYear"]);
             Assert.Equal("10", parameters["MinMonth"]);
             Assert.Equal("20", parameters["MinDay"]);
@@ -81,6 +84,7 @@ namespace xVal.Tests.Rules
             Assert.Equal("0", parameters["MaxHour"]);
             Assert.Equal("0", parameters["MaxMinute"]);
             Assert.Equal("0", parameters["MaxSecond"]);
+            Assert.Equal("datetime", parameters["Type"]);
         }
 
         [Fact]

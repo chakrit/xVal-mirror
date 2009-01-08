@@ -38,8 +38,18 @@ namespace xVal.Rules
                 if (Min != null) result.Add("Min", Min.ToString());
                 if (Max != null) result.Add("Max", Max.ToString());
             }
+            result.Add("Type", MakeTypeDescription(BoundType));
 
             return result;
+        }
+
+        private static string MakeTypeDescription(Type type)
+        {
+            if (type == typeof(int)) return "integer";
+            if (type == typeof(decimal)) return "decimal";
+            if (type == typeof(string)) return "string";
+            if (type == typeof(DateTime)) return "datetime";
+            throw new ArgumentException("Unexpected type");
         }
 
         private static void AddDateTimePartsToDictionary(IDictionary<string, string> collection, DateTime value, string prefix)

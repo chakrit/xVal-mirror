@@ -75,7 +75,7 @@
   <ItemGroup>
     <Compile Include="MvcTestSite\GlobalApplication.cs" />
     <Compile Include="MvcTestSite\TestController.cs" />
-    <Compile Include="Plugins\jQuery.Validate\Tests\PersonFormTests.cs" />
+    <Compile Include="Plugins\jQuery.Validate\Tests\AllPossibleRulesTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestHelpers\SampleRuleSets.cs" />
     <Compile Include="TestHelpers\SeleniumContext.cs" />
@@ -83,7 +83,7 @@
   <ItemGroup>
     <Content Include="Global.asax" />
     <Content Include="Plugins\jQuery.Validate\jquery.validate.js" />
-    <Content Include="Plugins\jQuery.Validate\Tests\Person.aspx" />
+    <Content Include="Plugins\jQuery.Validate\Tests\AllPossibleRules.aspx" />
     <Content Include="Plugins\jQuery.Validate\xVal.jquery.validate.js" />
     <Content Include="TestHelpers\PersonForm.ascx" />
     <Content Include="Web.config" />

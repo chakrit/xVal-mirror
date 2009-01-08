@@ -1,3 +1,5 @@
+using System;
+
 namespace xVal.Rules
 {
     public class StringLengthRule : RuleBase
@@ -7,6 +9,8 @@ namespace xVal.Rules
 
         public StringLengthRule(int? minLength, int? maxLength) : base("StringLength")
         {
+            if ((minLength == null) && (maxLength == null))
+                throw new ArgumentException("Specify minLength or maxLength or both");
             MinLength = minLength;
             MaxLength = maxLength;
         }

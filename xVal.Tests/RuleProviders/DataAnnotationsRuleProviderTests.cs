@@ -31,7 +31,7 @@ namespace xVal.Tests.RuleProviders
             Assert.Equal(3, rules.Keys.Count());
             Assert.Equal(2, rules["PublicProperty"].Count());
             Assert.NotEmpty(rules["PublicProperty"].OfType<RequiredRule>());
-            Assert.NotEmpty(rules["PublicProperty"].OfType<NumericRangeRule>());
+            Assert.NotEmpty(rules["PublicProperty"].OfType<RangeRule>());
 
             // Check attributes properties were retained
             var stringLengthRule = (StringLengthRule)rules["ReadonlyProperty"].First();
@@ -60,9 +60,9 @@ namespace xVal.Tests.RuleProviders
         [Fact]
         public void Converts_RangeAttribute_To_NumericRangeRule()
         {
-            var rule = TestConversion<RangeAttribute, NumericRangeRule>(3, 6);
-            Assert.Equal(3, rule.Min);
-            Assert.Equal(6, rule.Max);
+            var rule = TestConversion<RangeAttribute, RangeRule>(3, 6);
+            Assert.Equal(3, Convert.ToInt32(rule.Min));
+            Assert.Equal(6, Convert.ToInt32(rule.Max));
         }
 
         [Fact]
@@ -88,19 +88,31 @@ namespace xVal.Tests.RuleProviders
             return (TRule)ruleBase;
         }
 
+        /// <summary>
+        /// Produces a .NET type with a property called testProperty that has a custom attribute
+        /// </summary>
+        /// <param name="attributeType">Type of the custom attribute to apply</param>
+        /// <param name="attributeConstructorParams">Constructor parameters for the custom attribute</param>
+        /// <returns>The finished Type object</returns>
         private Type EmitTestType(Type attributeType, object[] attributeConstructorParams)
         {
+            // Define the type and its property
             var assembly = Thread.GetDomain().DefineDynamicAssembly(new AssemblyName("testAssembly"), AssemblyBuilderAccess.Run);
             var moduleBuilder = assembly.DefineDynamicModule("testModule");
             var typeBuilder = moduleBuilder.DefineType("testType");
-            var attributeConstructorParamTypes = attributeConstructorParams.Select(x => x.GetType()).ToArray();
-            var customAttributeBuilder = new CustomAttributeBuilder(attributeType.GetConstructor(attributeConstructorParamTypes), attributeConstructorParams);
             var prop = typeBuilder.DefineProperty("testProperty", PropertyAttributes.None, typeof (string), null);
-            prop.SetCustomAttribute(customAttributeBuilder);
+            
+            // The property needs a "get" method
             var getMethod = typeBuilder.DefineMethod("get_testProperty", MethodAttributes.Public, typeof(string), null);
             var getMethodILBuilder = getMethod.GetILGenerator();
             getMethodILBuilder.Emit(OpCodes.Ret);
             prop.SetGetMethod(getMethod);
+
+            // Apply the custom attribute to the property
+            var attributeConstructorParamTypes = attributeConstructorParams.Select(x => x.GetType()).ToArray();
+            var customAttributeBuilder = new CustomAttributeBuilder(attributeType.GetConstructor(attributeConstructorParamTypes), attributeConstructorParams);
+            prop.SetCustomAttribute(customAttributeBuilder);
+
             return typeBuilder.CreateType();
         }
 

@@ -44,7 +44,7 @@ xVal.Plugins["jquery.validate"] = {
                 element.rules("add", { required: true, messages: { required: errorText} });
                 break;
 
-            case "NumericRange":
+            case "Range":
                 if (typeof (ruleParams.Min) == 'undefined')
                     element.rules("add", { max: ruleParams.Max, messages: { max: errorText} });
                 else if (typeof (ruleParams.Max) == 'undefined')

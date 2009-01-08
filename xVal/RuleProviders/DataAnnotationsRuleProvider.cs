@@ -22,7 +22,7 @@ namespace xVal.RuleProviders
             else if (att is RangeAttribute)
             {
                 var r = (RangeAttribute) att;
-                result = new NumericRangeRule(r.Minimum == null ? (decimal?) null : Convert.ToDecimal(r.Minimum), r.Maximum == null ? (decimal?) null : Convert.ToDecimal(r.Maximum));
+                result = new RangeRule(r.Minimum == null ? (decimal?) null : Convert.ToDecimal(r.Minimum), r.Maximum == null ? (decimal?) null : Convert.ToDecimal(r.Maximum));
             }
             else if (att is DataTypeAttribute)
             {

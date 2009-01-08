@@ -66,7 +66,8 @@
     <Compile Include="RuleProviders\RuleSet.cs" />
     <Compile Include="Rules\DataType.cs" />
     <Compile Include="Rules\DataTypeRule.cs" />
-    <Compile Include="Rules\NumericRangeRule.cs" />
+    <Compile Include="Rules\RangeRule.cs" />
+    <Compile Include="Rules\RegularExpressionRule.cs" />
     <Compile Include="Rules\RequiredRule.cs" />
     <Compile Include="Rules\RuleBase.cs" />
     <Compile Include="Rules\StringLengthRule.cs" />

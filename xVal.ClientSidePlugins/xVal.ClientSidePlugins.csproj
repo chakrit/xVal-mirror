@@ -75,7 +75,7 @@
   <ItemGroup>
     <Compile Include="MvcTestSite\GlobalApplication.cs" />
     <Compile Include="MvcTestSite\TestController.cs" />
-    <Compile Include="Plugins\jQuery.Validate\Tests\PersonForm.cs" />
+    <Compile Include="Plugins\jQuery.Validate\Tests\PersonFormTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestHelpers\SampleRuleSets.cs" />
     <Compile Include="TestHelpers\SeleniumContext.cs" />

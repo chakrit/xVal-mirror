@@ -11,7 +11,20 @@ namespace xVal.Rules
 
         public enum DataType
         {
-            EmailAddress
+            Integer,
+            Decimal,
+            Date,
+            DateTime,
+            Currency,
+            EmailAddress,
+            CreditCardLuhn
+        }
+
+        public override System.Collections.Generic.IDictionary<string, string> ListParameters()
+        {
+            var result = base.ListParameters();
+            result.Add("Type", Type.ToString());
+            return result;
         }
     }
 }

@@ -4,7 +4,7 @@ using xVal.ClientSidePlugins.TestHelpers;
 
 namespace xVal.ClientSidePlugins.Plugins.jQuery.Validate.Tests
 {
-    public class PersonForm : IUseFixture<SeleniumContext>
+    public class PersonFormTests : IUseFixture<SeleniumContext>
     {
         private const string UrlFormat = "Test?viewPath=/Plugins/jQuery.Validate/Tests/{0}.aspx";
         private DefaultSelenium Browser;

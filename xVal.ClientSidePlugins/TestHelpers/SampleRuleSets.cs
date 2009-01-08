@@ -12,8 +12,8 @@ namespace xVal.ClientSidePlugins.TestHelpers
             get
             {
                 var rules = new List<KeyValuePair<string, RuleBase>> {
-                    new KeyValuePair<string, RuleBase>("Name", new RequiredRule()),
-                    new KeyValuePair<string, RuleBase>("Age", new NumericRangeRule(0, 150))
+                    new KeyValuePair<string, RuleBase>("Name", new RequiredRule { ErrorMessage = "State your name"}),
+                    new KeyValuePair<string, RuleBase>("Age", new NumericRangeRule(0, 150) { ErrorMessage = "Age must be within range 0-150"})
                 };
                 return new RuleSet(rules.ToLookup(x => x.Key, x => x.Value));
             }

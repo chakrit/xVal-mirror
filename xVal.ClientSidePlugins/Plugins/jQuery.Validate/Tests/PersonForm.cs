@@ -16,25 +16,25 @@ namespace xVal.ClientSidePlugins.Plugins.jQuery.Validate.Tests
         [Fact]
         public void NameFieldIsRequired()
         {
-            TestFieldValidation("Person", "person.Name", "", "Steve", "This field is required.");
+            TestFieldValidation("Person", "person.Name", "", "Steve", "State your name");
         }
 
         [Fact]
         public void AgeFieldCannotContainLetters()
         {
-            TestFieldValidation("Person", "person.Age", "1x", "1", "Please enter a value between 0 and 150.");
+            TestFieldValidation("Person", "person.Age", "1x", "1", "Age must be within range 0-150");
         }
 
         [Fact]
         public void AgeFieldCannotBeNegative()
         {
-            TestFieldValidation("Person", "person.Age", "-1", "0", "Please enter a value between 0 and 150.");
+            TestFieldValidation("Person", "person.Age", "-1", "0", "Age must be within range 0-150");
         }
 
         [Fact]
         public void AgeFieldCannotBeOver150()
         {
-            TestFieldValidation("Person", "person.Age", "151", "150", "Please enter a value between 0 and 150.");
+            TestFieldValidation("Person", "person.Age", "151", "150", "Age must be within range 0-150");
         }
 
         private void TestFieldValidation(string testPage, string inputField, string invalidValue, string validValue, string expectedFailureMessage)

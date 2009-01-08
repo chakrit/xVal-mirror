@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Reflection;
 
 namespace xVal.Rules
 {
@@ -40,6 +43,22 @@ namespace xVal.Rules
                 if (errorMessage != null)
                     throw new InvalidOperationException("Can't set ErrorMessageResourceName: this RuleBase is already in fixed-string mode");
                 errorMessageResourceName = value;
+            }
+        }
+
+        private readonly static Type[] EmptyTypeArray = new Type[] {};
+        public string ErrorMessageOrResourceString
+        {
+            get
+            {
+                if(errorMessage != null)
+                    return errorMessage;
+                else if ((errorMessageResourceType != null) && (errorMessageResourceName != null)) {
+                    var property = errorMessageResourceType.GetProperty(errorMessageResourceName, BindingFlags.Public | BindingFlags.Static, null, typeof(string), EmptyTypeArray, null);
+                    return (string)property.GetValue(null, null);
+                }
+                else
+                    return null;
             }
         }
 

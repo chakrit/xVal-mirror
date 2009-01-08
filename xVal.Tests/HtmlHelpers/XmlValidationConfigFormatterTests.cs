@@ -36,13 +36,14 @@ namespace xVal.Tests.HtmlHelpers
                     } 
                 }
             });
+            rules["myprop"].First().ErrorMessage = "My error message";
 
             // Act
             var result = formatter.FormatRules(rules);
 
             // Assert
             Assert.Equal(@"<xval:ruleset>
-    <somerule forfield=""myprop"" param1=""param1value"" param2=""param2value"" />
+    <somerule errmsg=""My error message"" forfield=""myprop"" param1=""param1value"" param2=""param2value"" />
 </xval:ruleset>", result);
         }
 

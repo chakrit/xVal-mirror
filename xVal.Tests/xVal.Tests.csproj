@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="HtmlHelpers\JsonValidationConfigFormatterTests.cs" />
     <Compile Include="HtmlHelpers\XmlValidationConfigFormatterTests.cs" />
+    <Compile Include="Rules\RuleBaseTests.cs" />
     <Compile Include="Rules\RulesTests.cs" />
     <Compile Include="TestHelpers\HtmlHelperMocks.cs" />
     <Compile Include="HtmlHelpers\HtmlHelpersTests.cs" />

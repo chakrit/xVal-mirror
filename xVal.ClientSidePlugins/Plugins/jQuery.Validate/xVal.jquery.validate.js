@@ -25,13 +25,14 @@ xVal.Plugins["jquery.validate"] = {
                 for (var j = 0; j < fieldRules.length; j++) {
                     var ruleName = fieldRules[j].RuleName;
                     var ruleParams = fieldRules[j].RuleParameters;
-                    this._attachRuleToDOMElement(ruleName, ruleParams, $(elem));
+                    var errorText = (typeof (fieldRules[j].Message) == 'undefined' ? null : fieldRules[j].Message);
+                    this._attachRuleToDOMElement(ruleName, ruleParams, errorText, $(elem));
                 }
             }
         }
     },
 
-    _attachRuleToDOMElement: function(ruleName, ruleParams, element) {
+    _attachRuleToDOMElement: function(ruleName, ruleParams, errorText, element) {
         var parentForm = element.parents("form");
         if (parentForm.length != 1)
             alert("Error: Element " + element.attr("id") + " is not in a form");
@@ -40,16 +41,16 @@ xVal.Plugins["jquery.validate"] = {
 
         switch (ruleName) {
             case "Required":
-                element.rules("add", { required: true });
+                element.rules("add", { required: true, messages: { required: errorText} });
                 break;
 
             case "NumericRange":
                 if (typeof (ruleParams.Min) == 'undefined')
-                    element.rules("add", { max: ruleParams.Max });
+                    element.rules("add", { max: ruleParams.Max, messages: { max: errorText} });
                 else if (typeof (ruleParams.Max) == 'undefined')
-                    element.rules("add", { min: ruleParams.Min });
+                    element.rules("add", { min: ruleParams.Min, messages: { min: errorText} });
                 else
-                    element.rules("add", { range: [ruleParams.Min, ruleParams.Max] });
+                    element.rules("add", { range: [ruleParams.Min, ruleParams.Max], messages: { range: errorText} });
                 break;
         }
     },

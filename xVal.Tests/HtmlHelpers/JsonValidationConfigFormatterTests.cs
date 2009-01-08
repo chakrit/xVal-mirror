@@ -4,6 +4,7 @@ using Xunit;
 using xVal.Html;
 using xVal.RuleProviders;
 using xVal.Tests.TestHelpers;
+using System.Linq;
 
 namespace xVal.Tests.HtmlHelpers
 {
@@ -35,6 +36,7 @@ namespace xVal.Tests.HtmlHelpers
                     } 
                 }
             });
+            rules["myprop"].First().ErrorMessage = "My_error_message";
 
             // Act
             var result = formatter.FormatRules(rules);
@@ -48,7 +50,9 @@ namespace xVal.Tests.HtmlHelpers
              ""RuleParameters"":{
                 ""param1"":""param1value"",
                 ""param2"":""param2value""
-            }}
+                },
+             ""Message"":""My_error_message""
+            }
         ]}
     ]
 }".Replace(" ", "").Replace(Environment.NewLine, ""), result);

@@ -35,10 +35,14 @@ namespace xVal.Html
                 if (ruleBase == null)
                     throw new ArgumentException("obj must be of type RouteBase");
 
-                return new Dictionary<string, object> {
+                var result = new Dictionary<string, object> {
                     { "RuleName", ruleBase.RuleName },
                     { "RuleParameters", ruleBase.ListParameters() }
                 };
+                var errorMessage = ruleBase.ErrorMessageOrResourceString;
+                if(errorMessage != null)
+                    result.Add("Message", errorMessage);
+                return result;
             }
 
             public override IEnumerable<Type> SupportedTypes

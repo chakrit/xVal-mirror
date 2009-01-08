@@ -38,6 +38,9 @@ namespace xVal.Html
             var tb = new TagBuilder(rule.RuleName);
             tb.MergeAttributes(rule.ListParameters());
             tb.MergeAttribute("forfield", forField);
+            var errorMessage = rule.ErrorMessageOrResourceString;
+            if(errorMessage != null)
+                tb.MergeAttribute("errmsg", errorMessage);
             return tb.ToString(TagRenderMode.SelfClosing);
         }
     }

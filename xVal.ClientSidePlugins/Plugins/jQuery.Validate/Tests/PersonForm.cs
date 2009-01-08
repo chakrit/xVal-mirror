@@ -26,13 +26,13 @@ namespace xVal.ClientSidePlugins.Plugins.jQuery.Validate.Tests
         }
 
         [Fact]
-        public void AgeFieldCannotContainBeNegative()
+        public void AgeFieldCannotBeNegative()
         {
             TestFieldValidation("Person", "person.Age", "-1", "0", "Please enter a value between 0 and 150.");
         }
 
         [Fact]
-        public void AgeFieldCannotContainBeOver150()
+        public void AgeFieldCannotBeOver150()
         {
             TestFieldValidation("Person", "person.Age", "151", "150", "Please enter a value between 0 and 150.");
         }

@@ -35,7 +35,7 @@ xVal.Plugins["jquery.validate"] = {
         var parentForm = element.parents("form");
         if (parentForm.length != 1)
             alert("Error: Element " + element.attr("id") + " is not in a form");
-        this._ensureFormIsMarkedForValidation(parentForm[0]);
+        this._ensureFormIsMarkedForValidation($(parentForm[0]));
         this._associateNearbyValidationMessageSpanWithElement(element);
 
         switch (ruleName) {
@@ -65,9 +65,9 @@ xVal.Plugins["jquery.validate"] = {
     },
 
     _ensureFormIsMarkedForValidation: function(formElement) {
-        if (!formElement.isMarkedForValidation) {
-            formElement.isMarkedForValidation = true;
-            $(formElement).validate({
+        if (!formElement.data("isMarkedForValidation")) {
+            formElement.data("isMarkedForValidation", true);
+            formElement.validate({
                 errorClass: "field-validation-error",
                 errorElement: "span",
                 highlight: function(element) { $(element).addClass("input-validation-error"); },

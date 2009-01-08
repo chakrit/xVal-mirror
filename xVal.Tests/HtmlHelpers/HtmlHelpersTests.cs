@@ -13,13 +13,13 @@ namespace xVal.Tests.HtmlHelpers
     public class HtmlHelpersTests
     {
         [Fact]
-        public void ClientSideValidation_Extends_HtmlHelper()
+        public void ClientSideValidationRules_Extends_HtmlHelper()
         {
             Action<HtmlHelper> test = x => x.ClientSideValidationRules(Moq.It.IsAny<Type>());
         }
 
         [Fact]
-        public void ClientSideValidation_Helper_Passes_Ruleset_Name_To_Formatter()
+        public void ClientSideValidationRules_Helper_Passes_Ruleset_Name_To_Formatter()
         {
             // Arrange
             var arbitraryType = typeof(DateTime);
@@ -37,7 +37,7 @@ namespace xVal.Tests.HtmlHelpers
         }
 
         [Fact]
-        public void ClientSideValidation_Helper_Passes_ActiveRuleProvider_Output_To_Formatter()
+        public void ClientSideValidationRules_Helper_Passes_ActiveRuleProvider_Output_To_Formatter()
         {
             // Arrange
             var html = new HtmlHelperMocks<object>().HtmlHelper;
@@ -67,6 +67,26 @@ namespace xVal.Tests.HtmlHelpers
             Assert.Equal("ok", result);
             Assert.Equal(1, passedRules.Keys.Count());
             Assert.Same(rules["someProperty"].Single(), passedRules["someProperty"].First());
+        }
+
+        [Fact]
+        public void ClientSideValidationRules_Can_Take_Explicit_RuleSet_And_Passes_It_To_Formatter()
+        {
+            // Arrange
+            var html = new HtmlHelperMocks<object>().HtmlHelper;
+            var rules = new RuleSet(new[] { "someProperty" }.ToLookup(x => x, x => (RuleBase)new RequiredRule()));
+
+            // Capture params passed to mockFormatter
+            var mockFormatter = new Moq.Mock<IValidationConfigFormatter>(MockBehavior.Strict);
+            mockFormatter.Expect(x => x.FormatRules(rules)).Returns("ok");
+
+            ValidationHelpers.Formatter = mockFormatter.Object;
+
+            // Act
+            var result = html.ClientSideValidationRules(rules);
+
+            // Assert
+            Assert.Equal("ok", result);
         }
     }
 }

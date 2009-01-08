@@ -1,6 +1,7 @@
 using System;
 using System.Web.Mvc;
 using System.Xml.Linq;
+using xVal.RuleProviders;
 
 namespace xVal.Html
 {
@@ -17,6 +18,12 @@ namespace xVal.Html
         public static string ClientSideValidationRules<TModel>(this HtmlHelper html)
         {
             return ClientSideValidationRules(html, typeof(TModel));
+        }
+
+        public static string ClientSideValidationRules(this HtmlHelper html, RuleSet rules)
+        {
+            if (rules == null) throw new ArgumentNullException("rules");
+            return Formatter.FormatRules(rules);
         }
     }
 }

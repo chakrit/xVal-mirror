@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("xVal.ClientSideTests")]
+[assembly: AssemblyTitle("xVal.ClientSidePlugins")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("xVal.ClientSideTests")]
+[assembly: AssemblyProduct("xVal.ClientSidePlugins")]
 [assembly: AssemblyCopyright("Copyright © Microsoft 2009")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("199803a4-1ece-4710-8c32-c1593ba19300")]
+[assembly: Guid("60c8b617-d757-4885-9a9b-fbddb93d7c3c")]
 
 // Version information for an assembly consists of the following four values:
 //

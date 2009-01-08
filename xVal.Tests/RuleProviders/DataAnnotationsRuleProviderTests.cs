@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Xunit;
 using xVal.RuleProviders;
@@ -58,11 +59,37 @@ namespace xVal.Tests.RuleProviders
         }
 
         [Fact]
-        public void Converts_RangeAttribute_To_NumericRangeRule()
+        public void Converts_RangeAttribute_Int_To_RangeRule()
         {
-            var rule = TestConversion<RangeAttribute, RangeRule>(3, 6);
+            var rule = TestConversion<RangeAttribute, RangeRule>((int)3, (int)6);
             Assert.Equal(3, Convert.ToInt32(rule.Min));
             Assert.Equal(6, Convert.ToInt32(rule.Max));
+        }
+
+        [Fact]
+        public void Converts_RangeAttribute_Double_To_RangeRule()
+        {
+            var rule = TestConversion<RangeAttribute, RangeRule>((double)3.492, (double)6.32);
+            Assert.Equal(3.492, Convert.ToDouble(rule.Min));
+            Assert.Equal(6.32, Convert.ToDouble(rule.Max));
+        }
+
+        [Fact]
+        public void Converts_RangeAttribute_String_To_RangeRule()
+        {
+            var rule = TestConversion<RangeAttribute, RangeRule>(typeof(string), "aaa", "zzz");
+            Assert.Equal("aaa", Convert.ToString(rule.Min));
+            Assert.Equal("zzz", Convert.ToString(rule.Max));
+        }
+
+        [Fact]
+        public void Converts_RangeAttribute_DateTime_To_RangeRule()
+        {
+            var min = new DateTime(2003, 01, 23, 05, 03, 10);
+            var max = new DateTime(2008, 06, 3);
+            var rule = TestConversion<RangeAttribute, RangeRule>(typeof(DateTime), min.ToString(), max.ToString());
+            Assert.Equal(min, Convert.ToDateTime(rule.Min));
+            Assert.Equal(max, Convert.ToDateTime(rule.Max));    
         }
 
         [Fact]
@@ -70,6 +97,81 @@ namespace xVal.Tests.RuleProviders
         {
             var rule = TestConversion<DataTypeAttribute, DataTypeRule>(DataType.EmailAddress);
             Assert.Equal(DataTypeRule.DataType.EmailAddress, rule.Type);
+        }
+
+        [Fact]
+        public void Converts_DataTypeAttribute_DateTime_To_DataTypeRule()
+        {
+            var rule = TestConversion<DataTypeAttribute, DataTypeRule>(DataType.DateTime);
+            Assert.Equal(DataTypeRule.DataType.DateTime, rule.Type);
+        }
+
+        [Fact]
+        public void Converts_DataTypeAttribute_Date_To_DataTypeRule()
+        {
+            var rule = TestConversion<DataTypeAttribute, DataTypeRule>(DataType.Date);
+            Assert.Equal(DataTypeRule.DataType.Date, rule.Type);
+        }
+
+        [Fact]
+        public void Converts_DataTypeAttribute_Currency_To_DataTypeRule()
+        {
+            var rule = TestConversion<DataTypeAttribute, DataTypeRule>(DataType.Currency);
+            Assert.Equal(DataTypeRule.DataType.Currency, rule.Type);
+        }
+
+        [Fact]
+        public void Converts_DataTypeAttribute_Time_To_RegularExpressionRule()
+        {
+            var rule = TestConversion<DataTypeAttribute, RegularExpressionRule>(DataType.Time);
+            Assert.Equal(RegularExpressionRule.Regex_Time, rule.Pattern);
+            Assert.Equal(RegexOptions.IgnoreCase, rule.Options);
+        }
+
+        [Fact]
+        public void Converts_DataTypeAttribute_Duration_To_RegularExpressionRule()
+        {
+            var rule = TestConversion<DataTypeAttribute, RegularExpressionRule>(DataType.Duration);
+            Assert.Equal(RegularExpressionRule.Regex_Duration, rule.Pattern);
+            Assert.Equal(RegexOptions.IgnoreCase, rule.Options);
+        }
+
+        [Fact]
+        public void Converts_DataTypeAttribute_PhoneNumber_To_RegularExpressionRule()
+        {
+            var rule = TestConversion<DataTypeAttribute, RegularExpressionRule>(DataType.PhoneNumber);
+            Assert.Equal(RegularExpressionRule.Regex_USPhoneNumber, rule.Pattern);
+            Assert.Equal(RegexOptions.IgnoreCase, rule.Options);
+        }
+
+        [Fact]
+        public void Converts_DataTypeAttribute_Url_To_RegularExpressionRule()
+        {
+            var rule = TestConversion<DataTypeAttribute, RegularExpressionRule>(DataType.Url);
+            Assert.Equal(RegularExpressionRule.Regex_Url, rule.Pattern);
+            Assert.Equal(RegexOptions.IgnoreCase, rule.Options);
+        }
+
+        [Fact]
+        public void Ignores_Other_DataType()
+        {
+            // Arrange
+            var provider = new DataAnnotationsRuleProvider();
+            Type testType = EmitTestType(typeof(DataTypeAttribute), new object[] { DataType.Custom });
+
+            // Act
+            var rules = provider.GetRulesFromType(testType);
+
+            // Assert
+            Assert.Empty(rules.Keys);
+        }
+
+        [Fact]
+        public void Converts_RegularExpressionAttribute_To_RegularExpressionRule()
+        {
+            var rule = TestConversion<RegularExpressionAttribute, RegularExpressionRule>("somepattern");
+            Assert.Equal("somepattern", rule.Pattern);
+            Assert.Equal(RegexOptions.None, rule.Options);
         }
 
         private TRule TestConversion<TAttribute, TRule>(params object[] attributeConstructorParams) where TAttribute: ValidationAttribute where TRule : RuleBase

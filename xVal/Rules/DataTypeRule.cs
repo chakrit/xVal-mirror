@@ -17,14 +17,15 @@ namespace xVal.Rules
             DateTime,
             Currency,
             EmailAddress,
-            CreditCardLuhn
+            CreditCardLuhn,
+            Text
         }
 
         public override System.Collections.Generic.IDictionary<string, string> ListParameters()
         {
             var result = base.ListParameters();
             result.Add("Type", Type.ToString());
-            return result;
+                return result;
         }
     }
 }

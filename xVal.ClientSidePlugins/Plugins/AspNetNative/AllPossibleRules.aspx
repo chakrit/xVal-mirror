@@ -22,9 +22,6 @@
         
         <input type="submit" value="Post now" />
     <% } %>
-    
-    <script type="text/javascript">
-        xVal.AttachValidator("myprefix", <%= Html.ClientSideValidationRules(SampleRuleSets.AllPossibleRules) %>);
-    </script>
+    <%= Html.ClientSideValidation("myprefix", SampleRuleSets.AllPossibleRules) %>
 </body>
 </html>

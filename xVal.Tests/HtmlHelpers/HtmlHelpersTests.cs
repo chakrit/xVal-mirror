@@ -88,5 +88,31 @@ namespace xVal.Tests.HtmlHelpers
             // Assert
             Assert.Equal("ok", result);
         }
+
+        [Fact]
+        public void ClientSideValidation_Extends_HtmlHelper()
+        {
+            Action<HtmlHelper> test = x => x.ClientSideValidation(typeof(string));
+        }
+
+        [Fact]
+        public void ClientSideValidation_Wraps_Output_From_Rule_Formatter()
+        {
+            // Arrange
+            var html = new HtmlHelperMocks<object>().HtmlHelper;
+            var rules = new RuleSet(new[] { "someProperty" }.ToLookup(x => x, x => (RuleBase)new RequiredRule()));
+
+            // Capture params passed to mockFormatter
+            var mockFormatter = new Moq.Mock<IValidationConfigFormatter>(MockBehavior.Strict);
+            mockFormatter.Expect(x => x.FormatRules(rules)).Returns("{rulesWouldGoHere}");
+
+            ValidationHelpers.Formatter = mockFormatter.Object;
+
+            // Act
+            var result = html.ClientSideValidation("my.prefix", rules);
+
+            // Assert
+            Assert.Equal(@"<script type=""text/javascript"">xVal.AttachValidator(""my.prefix"", {rulesWouldGoHere})</script>", result);
+        }
     }
 }

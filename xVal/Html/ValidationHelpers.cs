@@ -25,5 +25,36 @@ namespace xVal.Html
             if (rules == null) throw new ArgumentNullException("rules");
             return Formatter.FormatRules(rules);
         }
+
+        public static string ClientSideValidation(this HtmlHelper html, string elementPrefix, RuleSet rules)
+        {
+            var tb = new TagBuilder("script");
+            tb.MergeAttribute("type", "text/javascript");
+            elementPrefix = elementPrefix != null
+                                ? string.Format("\"{0}\"", elementPrefix)
+                                : "null";
+            tb.InnerHtml = string.Format("xVal.AttachValidator({0}, {1})", elementPrefix, ClientSideValidationRules(html, rules));
+            return tb.ToString(TagRenderMode.Normal);
+        }
+
+        public static string ClientSideValidation(this HtmlHelper html, string elementPrefix, Type modelType)
+        {
+            return ClientSideValidation(html, elementPrefix, ActiveRuleProviders.GetRulesForType(modelType));
+        }
+
+        public static string ClientSideValidation(this HtmlHelper html, Type modelType)
+        {
+            return ClientSideValidation(html, null, modelType);
+        }
+
+        public static string ClientSideValidation<TModel>(this HtmlHelper html, string elementPrefix)
+        {
+            return ClientSideValidation(html, elementPrefix, typeof (TModel));
+        }
+
+        public static string ClientSideValidation<TModel>(this HtmlHelper html)
+        {
+            return ClientSideValidation(html, null, typeof(TModel));
+        }
     }
 }

@@ -1,4 +1,10 @@
-﻿var xVal = xVal || {
+﻿// xVal.AspNetNative.js
+// An xVal plugin to enable support for ASP.NET WebForms native client-side validation
+// http://xval.codeplex.com/
+// (c) 2009 Steven Sanderson
+// License: Microsoft Public License (Ms-PL) (http://www.opensource.org/licenses/ms-pl.html)
+
+var xVal = xVal || {
     Plugins: {},
     AttachValidator: function(elementPrefix, rulesConfig, pluginName) {
         if (pluginName != null)

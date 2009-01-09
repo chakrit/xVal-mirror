@@ -4,6 +4,11 @@ using xVal.ClientSidePlugins.TestHelpers;
 
 namespace xVal.ClientSidePlugins.Plugins.jQuery.Validate.Tests
 {
+    /// <summary>
+    /// IMPORTANT: To run these tests, you need to be running:
+    ///    * Selenium Server on localhost:4444 (download Selenium RC from http://seleniumhq.org/download/)
+    ///    * The xVal.ClientSidePlugins site on localhost:49792 (just go to "Debug"->"Start without debugging")
+    /// </summary>
     public class AllPossibleRulesTests : IUseFixture<SeleniumContext>
     {
         private const string Url = "Test?viewPath=/Plugins/jQuery.Validate/Tests/AllPossibleRules.aspx";
@@ -116,7 +121,7 @@ namespace xVal.ClientSidePlugins.Plugins.jQuery.Validate.Tests
 
         private void TestFieldValidation(string inputField, string invalidValue, string validValue, string expectedFailureMessage)
         {
-            Browser.Open(string.Format(Url));
+            Browser.Open(Url);
 
             // Force validation failure
             Browser.Type(inputField, invalidValue);

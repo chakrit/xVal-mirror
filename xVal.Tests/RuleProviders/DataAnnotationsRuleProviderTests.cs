@@ -8,6 +8,7 @@ using System.Threading;
 using Xunit;
 using xVal.RuleProviders;
 using xVal.Rules;
+using xVal.Tests.TestHelpers;
 
 namespace xVal.Tests.RuleProviders
 {
@@ -157,7 +158,7 @@ namespace xVal.Tests.RuleProviders
         {
             // Arrange
             var provider = new DataAnnotationsRuleProvider();
-            Type testType = EmitTestType(typeof(DataTypeAttribute), new object[] { DataType.Custom });
+            Type testType = RulesProviderTestHelpers.EmitTestType(typeof(DataTypeAttribute), new object[] { DataType.Custom });
 
             // Act
             var rules = provider.GetRulesFromType(testType);
@@ -174,48 +175,11 @@ namespace xVal.Tests.RuleProviders
             Assert.Equal(RegexOptions.None, rule.Options);
         }
 
-        private TRule TestConversion<TAttribute, TRule>(params object[] attributeConstructorParams) where TAttribute: ValidationAttribute where TRule : RuleBase
+        private static TRule TestConversion<TAttribute, TRule>(params object[] attributeConstructorParams)
+            where TAttribute : ValidationAttribute
+            where TRule : RuleBase
         {
-            // Arrange
-            var provider = new DataAnnotationsRuleProvider();
-            Type testType = EmitTestType(typeof(TAttribute), attributeConstructorParams);
-
-            // Act
-            var rules = provider.GetRulesFromType(testType);
-
-            // Assert
-            Assert.Equal(1, rules.Keys.Count());
-            var ruleBase = rules["testProperty"].Single();
-            Assert.IsType<TRule>(ruleBase);
-            return (TRule)ruleBase;
-        }
-
-        /// <summary>
-        /// Produces a .NET type with a property called testProperty that has a custom attribute
-        /// </summary>
-        /// <param name="attributeType">Type of the custom attribute to apply</param>
-        /// <param name="attributeConstructorParams">Constructor parameters for the custom attribute</param>
-        /// <returns>The finished Type object</returns>
-        private Type EmitTestType(Type attributeType, object[] attributeConstructorParams)
-        {
-            // Define the type and its property
-            var assembly = Thread.GetDomain().DefineDynamicAssembly(new AssemblyName("testAssembly"), AssemblyBuilderAccess.Run);
-            var moduleBuilder = assembly.DefineDynamicModule("testModule");
-            var typeBuilder = moduleBuilder.DefineType("testType");
-            var prop = typeBuilder.DefineProperty("testProperty", PropertyAttributes.None, typeof (string), null);
-            
-            // The property needs a "get" method
-            var getMethod = typeBuilder.DefineMethod("get_testProperty", MethodAttributes.Public, typeof(string), null);
-            var getMethodILBuilder = getMethod.GetILGenerator();
-            getMethodILBuilder.Emit(OpCodes.Ret);
-            prop.SetGetMethod(getMethod);
-
-            // Apply the custom attribute to the property
-            var attributeConstructorParamTypes = attributeConstructorParams.Select(x => x.GetType()).ToArray();
-            var customAttributeBuilder = new CustomAttributeBuilder(attributeType.GetConstructor(attributeConstructorParamTypes), attributeConstructorParams);
-            prop.SetCustomAttribute(customAttributeBuilder);
-
-            return typeBuilder.CreateType();
+            return RulesProviderTestHelpers.TestConversion<TAttribute, TRule>(new DataAnnotationsRuleProvider(), attributeConstructorParams);
         }
 
         private class TestModel

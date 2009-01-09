@@ -51,33 +51,48 @@ namespace xVal.RuleProviders
                 result.Add(new RequiredRule());
                 result.Add(new DataTypeRule(DataTypeRule.DataType.Decimal));
             } else if(validator is LengthValidator) {
-                var lengthValidator = (LengthValidator)validator;
-                if(lengthValidator.ExactLength != int.MinValue)
-                    result.Add(new StringLengthRule(lengthValidator.ExactLength, lengthValidator.ExactLength));
-                else if((lengthValidator.MinLength != int.MaxValue) || (lengthValidator.MaxLength != int.MaxValue)) {
-                    result.Add(new StringLengthRule(
-                        /* Min length */ lengthValidator.MinLength == int.MinValue ? (int?)null : lengthValidator.MinLength,
-                        /* Min length */ lengthValidator.MaxLength == int.MaxValue ? (int?)null : lengthValidator.MaxLength
-                    ));
-                }
-            } else if (validator is RangeValidator)
-                result.Add(ConstructRangeRule((RangeValidator) validator));
-            else if(validator is RegularExpressionValidator) {
-                var regularExpressionValidator = (RegularExpressionValidator) validator;
+                var lengthRule = ConstructStringLengthRule((LengthValidator)validator);
+                if (lengthRule != null)
+                    result.Add(lengthRule);
+            }
+            else if (validator is RangeValidator) {
+                var rangeRule = ConstructRangeRule((RangeValidator) validator);
+                if (rangeRule != null)
+                    result.Add(rangeRule);
+            } else if (validator is RegularExpressionValidator)
+            {
+                var regularExpressionValidator = (RegularExpressionValidator)validator;
                 result.Add(new RegularExpressionRule(regularExpressionValidator.Expression, regularExpressionValidator.RegexRule.Options));
             }
 
             return result; 
         }
 
+        private static StringLengthRule ConstructStringLengthRule(LengthValidator lengthValidator)
+        {
+            if(lengthValidator.ExactLength != int.MinValue)
+                return new StringLengthRule(lengthValidator.ExactLength, lengthValidator.ExactLength);
+            else if((lengthValidator.MinLength != int.MaxValue) || (lengthValidator.MaxLength != int.MaxValue)) {
+                return new StringLengthRule(
+                               /* Min length */ lengthValidator.MinLength == int.MinValue ? (int?)null : lengthValidator.MinLength,
+                                                /* Min length */ lengthValidator.MaxLength == int.MaxValue ? (int?)null : lengthValidator.MaxLength
+                               );
+            }
+            return null;
+        }
+
+        // Due to an annoying inconsistency in Castle Validator, there's no way to determine the 
+        // min and max values for a RangeValidator other than by peeking at a private field.
+        // (All other validators expose a useful public description of themselves.)
+        private readonly static FieldInfo rangeValidatorMinField = typeof(RangeValidator).GetField("min", BindingFlags.Instance | BindingFlags.NonPublic);
+        private readonly static FieldInfo rangeValidatorMaxField = typeof(RangeValidator).GetField("max", BindingFlags.Instance | BindingFlags.NonPublic);
         private static RangeRule ConstructRangeRule(RangeValidator validator)
         {
-            // Due to an annoying inconsistency in Castle Validator, there's no way to determine the 
-            // min and max values for a RangeValidator other than by peeking at a private field.
-            // All other validators expose a useful public description of themselves.
-            object minValue = typeof(RangeValidator).GetField("min", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(validator);
-            object maxValue = typeof(RangeValidator).GetField("max", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(validator);
+            object minValue = rangeValidatorMinField.GetValue(validator);
+            object maxValue = rangeValidatorMaxField.GetValue(validator);
             switch (validator.Type) {
+                // RangeValidator's convention is to use type.MinValue/type.MaxValue/type.Empty to
+                // signal "no boundary at this end", whereas xVal uses null.
                 case RangeValidationType.Integer:
                     var minInt = (int) minValue == int.MinValue ? (int?) null : (int) minValue;
                     var maxInt = (int) maxValue == int.MaxValue ? (int?) null : (int) maxValue;
@@ -95,7 +110,7 @@ namespace xVal.RuleProviders
                     var maxString = (string)maxValue == string.Empty ? null : (string)maxValue;
                     return new RangeRule(minString, maxString);
             }
-            throw new ArgumentException("validator is of an unknown RangeValidationType");
+            return null; // Ignore unknown RangeValidationType
         }
     }
 }

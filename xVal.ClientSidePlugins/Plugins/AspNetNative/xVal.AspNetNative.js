@@ -55,7 +55,7 @@ xVal.Plugins["AspNetNative"] = {
         }
         this._ensureValidationEnabledOnForm(parentForm);
 
-        var messageContainer = this._findOrCreateMessageContainer(element, ruleConfig.errorMessage);
+        var messageContainer = this._createMessageContainer(element, ruleConfig.errorMessage);
 
         Page_Validators[Page_Validators.length] = messageContainer;
 
@@ -157,7 +157,7 @@ xVal.Plugins["AspNetNative"] = {
                         break;
                     case "Integer":
                         pattern = "^\\-?\\d+$";
-                        message = "Please enter a whole number.";
+                        message = "Please enter a number.";
                         break;
                     case "Decimal":
                         pattern = "^\\-?\\d+(\\.\\d+)?$";
@@ -186,17 +186,36 @@ xVal.Plugins["AspNetNative"] = {
         return null;
     },
 
-    _findOrCreateMessageContainer: function(element, initialText) {
-        // Todo: find existing ones
+    _hideElementOnChange: function(elementToWatch, elementToHide) {
+        var handler = function() { elementToHide.style.display = "none"; };
+        if (elementToWatch.addEventListener)
+            elementToWatch.addEventListener('change', handler, false);
+        else
+            elementToWatch.attachEvent('onchange', handler);
+    },
+
+    _createMessageContainer: function(element, initialText) {
+        // Is there an existing message container with htmlfor="elementid"?
+        // If so, we'll put the messages next to it
+        var insertAfterElem = element;
+        var spans = document.getElementsByTagName("SPAN");
+        for (var i = 0; i < spans.length; i++) {
+            if (spans[i].getAttribute("htmlfor") == element.id) {
+                insertAfterElem = spans[i];
+                this._hideElementOnChange(element, insertAfterElem);
+                break;
+            }
+        }
+
         var result = document.createElement("span");
         result.id = element.id + "_Msg";
         result.innerHTML = initialText;
         result.style.color = "Red";
         result.style.display = "none";
-        if (element.nextSibling)
-            element.parentNode.insertAfter(result, element.nextSibling);
+        if (insertAfterElem.nextSibling)
+            insertAfterElem.parentNode.insertBefore(result, insertAfterElem.nextSibling);
         else
-            element.parentNode.appendChild(result);
+            insertAfterElem.parentNode.appendChild(result);
         return result;
     },
 

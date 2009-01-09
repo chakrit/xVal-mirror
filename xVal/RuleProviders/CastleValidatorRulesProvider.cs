@@ -59,8 +59,8 @@ namespace xVal.RuleProviders
                 var rangeRule = ConstructRangeRule((RangeValidator) validator);
                 if (rangeRule != null)
                     result.Add(rangeRule);
-            } else if (validator is RegularExpressionValidator)
-            {
+            } 
+            else if (validator is RegularExpressionValidator) {
                 var regularExpressionValidator = (RegularExpressionValidator)validator;
                 result.Add(new RegularExpressionRule(regularExpressionValidator.Expression, regularExpressionValidator.RegexRule.Options));
             }

@@ -220,6 +220,7 @@
                 jQuery.validator.addMethod("xVal_creditCardLuhn", function(value, element, params) {
                     if (this.optional(element)) return true;
                     value = value.replace(/\D/g, "");
+                    if (value == "") return false;
                     var sum = 0;
                     for (var i = value.length - 2; i >= 0; i -= 2)
                         sum += Array(0, 2, 4, 6, 8, 1, 3, 5, 7, 9)[parseInt(value.charAt(i), 10)];

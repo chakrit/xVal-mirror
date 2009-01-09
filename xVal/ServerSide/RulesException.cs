@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace xVal.ServerSide
 {
-    public class RulesException
+    public class RulesException : Exception
     {
         public RulesException(IEnumerable<ErrorInfo> errors)
         {
@@ -22,12 +22,12 @@ namespace xVal.ServerSide
 
         public IEnumerable<ErrorInfo> Errors { get; private set; }
 
-        public void PopulateModelState(ModelStateDictionary modelState, string prefix)
+        public void AddModelStateErrors(ModelStateDictionary modelState, string prefix)
         {
-            PopulateModelState(modelState, prefix, x => true);
+            AddModelStateErrors(modelState, prefix, x => true);
         }
 
-        public void PopulateModelState(ModelStateDictionary modelState, string prefix, Func<ErrorInfo, bool> errorFilter)
+        public void AddModelStateErrors(ModelStateDictionary modelState, string prefix, Func<ErrorInfo, bool> errorFilter)
         {
             if (errorFilter == null) throw new ArgumentNullException("errorFilter");
             prefix = prefix == null ? "" : prefix + ".";

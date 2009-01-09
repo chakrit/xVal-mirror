@@ -24,6 +24,13 @@ namespace xVal.Tests.RuleProviders
         }
 
         [Fact]
+        public void Converts_ValidateEmailAttribute_To_DataTypeRule_Email()
+        {
+            var rule = TestConversion<ValidateEmailAttribute, DataTypeRule>();
+            Assert.Equal(DataTypeRule.DataType.EmailAddress, rule.Type);
+        }
+
+        [Fact]
         public void Converts_ValidateCreditCardAttribute_To_DataType_CreditCard()
         {
             var rule = TestConversion<ValidateCreditCardAttribute, DataTypeRule>();

@@ -8,6 +8,12 @@ namespace xVal.Tests.ServerSide
     public class RulesExceptionTests
     {
         [Fact]
+        public void Extends_Exception()
+        {
+            System.Exception ex = new RulesException("prop", "error");
+        }
+
+        [Fact]
         public void Can_Construct_With_Enumerable_Of_ErrorInfo()
         {
             var errors = new[] {
@@ -47,7 +53,7 @@ namespace xVal.Tests.ServerSide
             var modelState = new ModelStateDictionary();
 
             // Act
-            ex.PopulateModelState(modelState, null, x => x.Object == someObj);
+            ex.AddModelStateErrors(modelState, null, x => x.Object == someObj);
 
             // Assert
             Assert.Equal(2, modelState.Keys.Count());
@@ -73,7 +79,7 @@ namespace xVal.Tests.ServerSide
             var modelState = new ModelStateDictionary();
 
             // Act
-            ex.PopulateModelState(modelState, "my.prefix", x => x.Object == someObj);
+            ex.AddModelStateErrors(modelState, "my.prefix", x => x.Object == someObj);
 
             // Assert
             Assert.Equal(2, modelState.Keys.Count());

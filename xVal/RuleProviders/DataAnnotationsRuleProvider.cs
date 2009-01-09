@@ -1,8 +1,11 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using xVal.Rules;
+using System.Linq;
 
 namespace xVal.RuleProviders
 {
@@ -10,7 +13,30 @@ namespace xVal.RuleProviders
     // (since this is really a plugin)
     public class DataAnnotationsRuleProvider : PropertyAttributeRuleProviderBase<ValidationAttribute>
     {
-        private static readonly Type[] NumericTypes = new Type[] { typeof(int), typeof(double), typeof(decimal), typeof(float), typeof(Single) };
+        private static readonly Type[] NumericTypes = new Type[] { typeof(int), typeof(double), typeof(decimal), typeof(float) };
+
+        protected override IEnumerable<RuleBase> GetRulesFromProperty(PropertyInfo propertyInfo)
+        {
+            return base.GetRulesFromProperty(propertyInfo)
+                   .Union(GetNumericValueTypeRulesFromProperty(propertyInfo));
+        }
+
+        private static IEnumerable<RuleBase> GetNumericValueTypeRulesFromProperty(PropertyInfo propertyInfo)
+        {
+            // System.ComponentModel.DataAnnotations doesn't have any attribute to represent "int" or "double",
+            // so we'll infer it directly from the property type
+            if (Array.IndexOf(NumericTypes, UnwrapIfNullable(propertyInfo.PropertyType)) >= 0) {
+                if (propertyInfo.PropertyType == typeof (int))
+                    yield return new DataTypeRule(DataTypeRule.DataType.Integer);
+                else
+                    yield return new DataTypeRule(DataTypeRule.DataType.Decimal);
+            }
+        }
+
+        private static Type UnwrapIfNullable(Type type)
+        {
+            return Nullable.GetUnderlyingType(type) ?? type;
+        }
 
         protected override RuleBase MakeValidationRuleFromAttribute(ValidationAttribute att)
         {

@@ -175,6 +175,23 @@ namespace xVal.Tests.RuleProviders
             Assert.Equal(RegexOptions.None, rule.Options);
         }
 
+        [Fact]
+        public void Adds_Rules_For_ValueType_Numeric_Properties()
+        {
+            // Arrange
+            var provider = new DataAnnotationsRuleProvider();
+
+            // Act
+            var rules = provider.GetRulesFromType(typeof (ModelWithValueTypeProperties));
+
+            // Assert
+            Assert.Equal(4, rules.Keys.Count());
+            Assert.Equal(DataTypeRule.DataType.Integer, rules["IntProperty"].OfType<DataTypeRule>().Single().Type);
+            Assert.Equal(DataTypeRule.DataType.Decimal, rules["DoubleProperty"].OfType<DataTypeRule>().Single().Type);
+            Assert.Equal(DataTypeRule.DataType.Decimal, rules["FloatProperty"].OfType<DataTypeRule>().Single().Type);
+            Assert.Equal(DataTypeRule.DataType.Decimal, rules["DecimalProperty"].OfType<DataTypeRule>().Single().Type);
+        }
+
         private static TRule TestConversion<TAttribute, TRule>(params object[] attributeConstructorParams)
             where TAttribute : ValidationAttribute
             where TRule : RuleBase
@@ -198,6 +215,15 @@ namespace xVal.Tests.RuleProviders
 
             [Required] // Shouldn't be detected
                 private object PrivateProperty { get; set; }
+        }
+
+        private class ModelWithValueTypeProperties
+        {
+            public int IntProperty { get; set; }
+            public double DoubleProperty { get; set; }
+            public float? FloatProperty { get; set; }
+            public decimal DecimalProperty { get; set; }
+            public string StringProperty { get; set; }
         }
 
         private class TestResources

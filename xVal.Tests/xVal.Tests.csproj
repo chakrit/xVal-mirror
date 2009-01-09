@@ -72,6 +72,7 @@
     <Compile Include="RuleProviders\CastleValidatorRulesProviderTests.cs" />
     <Compile Include="Rules\RuleBaseTests.cs" />
     <Compile Include="Rules\RulesTests.cs" />
+    <Compile Include="ServerSide\RulesExceptionTests.cs" />
     <Compile Include="TestHelpers\HtmlHelperMocks.cs" />
     <Compile Include="HtmlHelpers\HtmlHelpersTests.cs" />
     <Compile Include="RuleProviders\ActiveRuleProvidersTests.cs" />

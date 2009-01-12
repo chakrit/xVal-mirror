@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -13,20 +14,36 @@ namespace xVal.RuleProviders
     // (since this is really a plugin)
     public class DataAnnotationsRuleProvider : PropertyAttributeRuleProviderBase<ValidationAttribute>
     {
-        private static readonly Type[] NumericTypes = new Type[] { typeof(int), typeof(double), typeof(decimal), typeof(float) };
+        private readonly Func<Type, TypeDescriptionProvider> metadataProviderFactory; // Yes, it's a factory factory factory. Just trying to be consistent with the Dynamic Data API (http://mattberseth.com/blog/2008/08/dynamic_data_and_custom_metada.html)
+        private static readonly Type[] NumericTypes = new[] { typeof(int), typeof(double), typeof(decimal), typeof(float) };
 
-        protected override IEnumerable<RuleBase> GetRulesFromProperty(PropertyInfo propertyInfo)
+        public DataAnnotationsRuleProvider()
+            : this(x => new AssociatedMetadataTypeTypeDescriptionProvider(x))
         {
-            return base.GetRulesFromProperty(propertyInfo)
-                   .Union(GetNumericValueTypeRulesFromProperty(propertyInfo));
         }
 
-        private static IEnumerable<RuleBase> GetNumericValueTypeRulesFromProperty(PropertyInfo propertyInfo)
+        public DataAnnotationsRuleProvider(Func<Type, TypeDescriptionProvider> metadataProviderFactory)
+        {
+            this.metadataProviderFactory = metadataProviderFactory;
+        }
+
+        protected override TypeDescriptionProvider GetTypeDescriptionProvider(Type type)
+        {
+            return metadataProviderFactory(type);
+        }
+
+        protected override IEnumerable<RuleBase> GetRulesFromProperty(PropertyDescriptor propertyDescriptor)
+        {
+            return base.GetRulesFromProperty(propertyDescriptor)
+                   .Union(GetNumericValueTypeRulesFromProperty(propertyDescriptor));
+        }
+
+        private static IEnumerable<RuleBase> GetNumericValueTypeRulesFromProperty(PropertyDescriptor propertyDescriptor)
         {
             // System.ComponentModel.DataAnnotations doesn't have any attribute to represent "int" or "double",
             // so we'll infer it directly from the property type
-            if (Array.IndexOf(NumericTypes, UnwrapIfNullable(propertyInfo.PropertyType)) >= 0) {
-                if (propertyInfo.PropertyType == typeof (int))
+            if (Array.IndexOf(NumericTypes, UnwrapIfNullable(propertyDescriptor.PropertyType)) >= 0) {
+                if (propertyDescriptor.PropertyType == typeof(int))
                     yield return new DataTypeRule(DataTypeRule.DataType.Integer);
                 else
                     yield return new DataTypeRule(DataTypeRule.DataType.Decimal);

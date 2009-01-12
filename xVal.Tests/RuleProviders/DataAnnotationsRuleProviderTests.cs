@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
@@ -21,6 +22,12 @@ namespace xVal.Tests.RuleProviders
         }
 
         [Fact]
+        public void Constructor_Can_Accept_TypeDescriptionProvider_Factory()
+        {
+            new DataAnnotationsRuleProvider(x => new Moq.Mock<TypeDescriptionProvider>().Object);
+        }
+
+        [Fact]
         public void FindsValidationAttributesAttachedToPublicProperties()
         {
             // Arrange
@@ -39,11 +46,49 @@ namespace xVal.Tests.RuleProviders
             var stringLengthRule = (StringLengthRule)rules["ReadonlyProperty"].First();
             Assert.Equal(3, stringLengthRule.MaxLength);
             Assert.Equal("Too long", stringLengthRule.ErrorMessage);
-            var emailAddressRule = (DataTypeRule) rules["WriteonlyProperty"].First();
+            var emailAddressRule = (DataTypeRule)rules["PropertyWithLocalizedMessage"].First();
             Assert.Equal(DataTypeRule.DataType.EmailAddress, emailAddressRule.Type);
             Assert.Equal(typeof(TestResources), emailAddressRule.ErrorMessageResourceType);
             Assert.Equal("TestResourceItem", emailAddressRule.ErrorMessageResourceName);
         }
+
+
+
+        [Fact]
+        public void Uses_Metadata_Provider_To_Locate_Properties()
+        {
+            // Arrange a mock type descriptor instance plus a TypeDescriptionProvider that will return it 
+            PropertyDescriptor prop1 = MakeMockPropertyDescriptor("myProp1", typeof(string), new RequiredAttribute());
+            PropertyDescriptor prop2 = MakeMockPropertyDescriptor("myProp2", typeof(object), new RangeAttribute(3, 6), new DataTypeAttribute(DataType.EmailAddress));
+            var mockTypeDescriptor = new Moq.Mock<ICustomTypeDescriptor>();
+            mockTypeDescriptor.Expect(x => x.GetProperties())
+                              .Returns(new PropertyDescriptorCollection(new[] { prop1, prop2 }));
+
+            var mockTypeDescriptionProvider = new Moq.Mock<TypeDescriptionProvider>();
+            mockTypeDescriptionProvider.Expect(x => x.GetTypeDescriptor(typeof(MyDummyType), null)).Returns(mockTypeDescriptor.Object);
+            var ruleProvider = new DataAnnotationsRuleProvider(x => mockTypeDescriptionProvider.Object);
+
+            // Act
+            var rules = ruleProvider.GetRulesFromType(typeof (MyDummyType));
+
+            // Assert
+            Assert.Equal(2, rules.Keys.Count());
+            Assert.IsType<RequiredRule>(rules["myProp1"].Single());
+            Assert.Equal(2, rules["myProp2"].Count());
+            Assert.IsType<RangeRule>(rules["myProp2"].First());
+            Assert.IsType<DataTypeRule>(rules["myProp2"].Skip(1).First());
+        }
+
+        private static PropertyDescriptor MakeMockPropertyDescriptor(string propertyName, Type propertyType, params Attribute[] attributes)
+        {
+            var mockDescriptor = new Moq.Mock<PropertyDescriptor>("ignored", new Attribute[0]);
+            mockDescriptor.Expect(x => x.Name).Returns(propertyName);
+            mockDescriptor.Expect(x => x.PropertyType).Returns(propertyType);
+            mockDescriptor.Expect(x => x.Attributes).Returns(new AttributeCollection(attributes));
+            return mockDescriptor.Object;
+        }
+
+        private class MyDummyType {}
 
         [Fact]
         public void Converts_RequiredAttribute_To_RequiredRule()
@@ -209,9 +254,13 @@ namespace xVal.Tests.RuleProviders
             public object ReadonlyProperty { get; private set; }
 
             [DataType(DataType.EmailAddress, ErrorMessageResourceType = typeof (TestResources), ErrorMessageResourceName = "TestResourceItem")]
-            public object WriteonlyProperty { private get; set; }
+            public object PropertyWithLocalizedMessage { get; set; }
+
 
             public object PropertyWithNoValidationAttributes { get; set; }
+
+            [Required] // Shouldn't be detected (TypeDescriptor doesn't tell you about write-only properties)
+            public object WriteOnlyProperty { private get; set; }
 
             [Required] // Shouldn't be detected
                 private object PrivateProperty { get; set; }
@@ -229,6 +278,38 @@ namespace xVal.Tests.RuleProviders
         private class TestResources
         {
             public static string TestResourceItem { get; set; }
+        }
+
+        [Fact]
+        public void Can_Detect_Attributes_On_Buddy_Class()
+        {
+            // Arrange
+            var provider = new DataAnnotationsRuleProvider();
+
+            // Act
+            var rules = provider.GetRulesFromType(typeof (DummyGeneratedClass));
+
+            // Assert
+            Assert.Equal(2, rules.Keys.Count());
+            Assert.Equal(2, rules["Name"].Count());
+            Assert.Equal(2, rules["Age"].Count());
+            Assert.Equal(1, rules["Name"].OfType<RequiredRule>().Count());
+            Assert.Equal(1, rules["Name"].OfType<StringLengthRule>().Count());
+            Assert.Equal(1, rules["Age"].OfType<DataTypeRule>().Count()); // Should detect this as integer (preferring type on real class over type on buddy class)
+            Assert.Equal(1, rules["Age"].OfType<RangeRule>().Count());
+        }
+
+        [MetadataType(typeof(DummyBuddyClass))]
+        private class DummyGeneratedClass
+        {
+            public string Name { get; set; }
+            public int Age { get; set; }
+        }
+
+        private class DummyBuddyClass
+        {
+            [Required] [StringLength(50)] public string Name { get; set; }
+            [Range(0, 150)] public object Age { get; set; }
         }
     }
 }

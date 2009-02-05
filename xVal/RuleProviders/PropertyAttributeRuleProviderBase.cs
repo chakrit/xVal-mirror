@@ -1,17 +1,26 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using xVal.Rules;
 
 namespace xVal.RuleProviders
 {
-    public abstract class PropertyAttributeRuleProviderBase<TAttribute> : IRulesProvider where TAttribute : Attribute
+    public abstract class PropertyAttributeRuleProviderBase<TAttribute> : CachingRulesProvider where TAttribute : Attribute
     {
-        public RuleSet GetRulesFromType(Type type)
+        private readonly Func<Type, TypeDescriptionProvider> metadataProviderFactory; // Yes, it's a factory factory factory. Just trying to be consistent with the Dynamic Data API (http://mattberseth.com/blog/2008/08/dynamic_data_and_custom_metada.html)
+
+        protected PropertyAttributeRuleProviderBase() : this(null) { }
+        protected PropertyAttributeRuleProviderBase(Func<Type, TypeDescriptionProvider> metadataProviderFactory)
         {
-            var typeDescriptor = GetTypeDescriptionProvider(type).GetTypeDescriptor(type);
+            this.metadataProviderFactory = metadataProviderFactory ?? (x => new AssociatedMetadataTypeTypeDescriptionProvider(x));
+        }
+
+        protected override RuleSet GetRulesFromTypeCore(Type type)
+        {
+            var typeDescriptor = metadataProviderFactory(type).GetTypeDescriptor(type);
             var rules = (from prop in typeDescriptor.GetProperties().Cast<PropertyDescriptor>()
                          from rule in GetRulesFromProperty(prop)
                          select new KeyValuePair<string, RuleBase>(prop.Name, rule));
@@ -21,16 +30,11 @@ namespace xVal.RuleProviders
         protected virtual IEnumerable<RuleBase> GetRulesFromProperty(PropertyDescriptor propertyDescriptor)
         {
             return from att in propertyDescriptor.Attributes.OfType<TAttribute>()
-                   let validationRule = MakeValidationRuleFromAttribute(att)
+                   from validationRule in MakeValidationRulesFromAttribute(att)
                    where validationRule != null
                    select validationRule;
         }
 
-        protected abstract RuleBase MakeValidationRuleFromAttribute(TAttribute att);
-
-        protected virtual TypeDescriptionProvider GetTypeDescriptionProvider(Type type)
-        {
-            return TypeDescriptor.GetProvider(type);
-        }
+        protected abstract IEnumerable<RuleBase> MakeValidationRulesFromAttribute(TAttribute att);
     }
 }

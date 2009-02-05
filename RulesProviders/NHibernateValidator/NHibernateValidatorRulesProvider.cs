@@ -13,53 +13,40 @@ using xVal.Rules;
 
 namespace xVal.RulesProviders.NHibernateValidator
 {
-    public class NHibernateValidatorRulesProvider : IRulesProvider
+    public class NHibernateValidatorRulesProvider : CachingRulesProvider
     {
         private readonly ValidatorMode configMode;
-        private readonly IDictionary<Type, Func<object, RuleBase>> converters = new Dictionary<Type, Func<object, RuleBase>>();
+        private readonly RuleEmitterList<IRuleArgs> ruleEmitters = new RuleEmitterList<IRuleArgs>();
 
         public NHibernateValidatorRulesProvider(ValidatorMode configMode)
         {
             this.configMode = configMode;
 
-            RegisterConverter<LengthAttribute>(ConvertLengthAttributeToStringLengthRule);
+            ruleEmitters.AddSingle<LengthAttribute>(ConvertLengthAttributeToStringLengthRule);
         }
 
-        public void RegisterConverter<TAttribute>(Func<TAttribute, RuleBase> converter) where TAttribute: Attribute
-        {
-            Func<object, RuleBase> objectConverter = x => converter((TAttribute) x);
-            if (converters.ContainsKey(typeof(TAttribute)))
-                converters[typeof (TAttribute)] = objectConverter;
-            else
-                converters.Add(typeof(TAttribute), objectConverter);
-        }
-
-        public RuleSet GetRulesFromType(Type type)
+        protected override RuleSet GetRulesFromTypeCore(Type type)
         {
             var classMapping = ClassMappingFactory.GetClassMapping(type, configMode);
 
             var rules = from member in type.GetMembers()
                         where member.MemberType == MemberTypes.Field || member.MemberType == MemberTypes.Property
-                        from att in classMapping.GetMemberAttributes(member)
-                        where typeof(IRuleArgs).IsAssignableFrom(att.GetType()) // All NHibernate Validation validators attributes must implement this interface
-                        let rule = ConvertToXValRule(att)
+                        from att in classMapping.GetMemberAttributes(member).OfType<IRuleArgs>() // All NHibernate Validation validators attributes must implement this interface
+                        from rule in ConvertToXValRules(att)
                         where rule != null
                         select new { MemberName = member.Name, Rule = rule };
 
             return new RuleSet(rules.ToLookup(x => x.MemberName, x => x.Rule));
         }
 
-        private RuleBase ConvertToXValRule(Attribute att)
+        private IEnumerable<RuleBase> ConvertToXValRules(IRuleArgs att)
         {
-            RuleBase result = null;
-            
-            if(converters.ContainsKey(att.GetType()))
-                result = converters[att.GetType()](att);
-
-            if (result != null)
-                result.ErrorMessage = ((IRuleArgs) att).Message;
-
-            return result;
+            foreach (var rule in ruleEmitters.EmitRules(att)) {
+                if(rule != null) {
+                    rule.ErrorMessage = att.Message;
+                    yield return rule;
+                }
+            }
         }
 
         private static StringLengthRule ConvertLengthAttributeToStringLengthRule(LengthAttribute att)

@@ -8,69 +8,52 @@ using xVal.Rules;
 
 namespace xVal.RulesProviders.CastleValidator
 {
-    public class CastleValidatorRulesProvider : IRulesProvider
+    public class CastleValidatorRulesProvider : CachingRulesProvider
     {
         private readonly IValidatorRegistry registry;
         private readonly ValidatorRunner runner;
+        private readonly RuleEmitterList<IValidator> ruleEmitters = new RuleEmitterList<IValidator>();
 
         public CastleValidatorRulesProvider()
         {
             registry = new CachedValidationRegistry();
             runner = new ValidatorRunner(registry);
+            ruleEmitters.AddSingle<NonEmptyValidator>(x => new RequiredRule());
+            ruleEmitters.AddSingle<CreditCardValidator>(x => new DataTypeRule(DataTypeRule.DataType.CreditCardLuhn));
+            ruleEmitters.AddMultiple<DateTimeValidator>(x => new RuleBase[] {
+                new RequiredRule(),
+                new DataTypeRule(DataTypeRule.DataType.DateTime)
+            });
+            ruleEmitters.AddMultiple<DateValidator>(x => new RuleBase[] {
+                new RequiredRule(),
+                new DataTypeRule(DataTypeRule.DataType.Date)
+            });
+            ruleEmitters.AddMultiple<IntegerValidator>(x => new RuleBase[] {
+                new RequiredRule(),
+                new DataTypeRule(DataTypeRule.DataType.Integer)
+            });
+            ruleEmitters.AddMultiple<IValidator>(x => {
+                if ((x is DecimalValidator) || (x is DoubleValidator) || (x is SingleValidator)) {
+                    return new RuleBase[] {
+                        new RequiredRule(),
+                        new DataTypeRule(DataTypeRule.DataType.Decimal)
+                    };
+                } else
+                    return null;
+            });
+            ruleEmitters.AddSingle<LengthValidator>(ConstructStringLengthRule);
+            ruleEmitters.AddSingle<RangeValidator>(ConstructRangeRule);
+            ruleEmitters.AddSingle<EmailValidator>(x => new DataTypeRule(DataTypeRule.DataType.EmailAddress));
+            ruleEmitters.AddSingle<RegularExpressionValidator>(x => new RegularExpressionRule(x.Expression, x.RegexRule.Options));
         }
 
-        public RuleSet GetRulesFromType(Type type)
+        protected override RuleSet GetRulesFromTypeCore(Type type)
         {
             var validators = registry.GetValidators(runner, type, RunWhen.Everytime);
             var allRules = from val in validators
-                           from rule in ConvertToXValRules(val)
+                           from rule in ruleEmitters.EmitRules(val)
                            select new KeyValuePair<string, RuleBase>(val.Property.Name, rule);
             return new RuleSet(allRules.ToLookup(x => x.Key, x => x.Value));
-        }
-
-        private static IEnumerable<RuleBase> ConvertToXValRules(IValidator validator)
-        {
-            var result = new List<RuleBase>();
-
-            if (validator is NonEmptyValidator)
-                result.Add(new RequiredRule());
-            else if (validator is CreditCardValidator)
-                result.Add(new DataTypeRule(DataTypeRule.DataType.CreditCardLuhn));
-            else if(validator is DateTimeValidator) {
-                result.Add(new RequiredRule());
-                result.Add(new DataTypeRule(DataTypeRule.DataType.DateTime));
-            }
-            else if (validator is DateValidator) {
-                result.Add(new RequiredRule());
-                result.Add(new DataTypeRule(DataTypeRule.DataType.Date));
-            }
-            else if (validator is IntegerValidator) {
-                result.Add(new RequiredRule());
-                result.Add(new DataTypeRule(DataTypeRule.DataType.Integer));
-            }
-            else if ((validator is DecimalValidator) || (validator is DoubleValidator) || (validator is SingleValidator)) {
-                result.Add(new RequiredRule());
-                result.Add(new DataTypeRule(DataTypeRule.DataType.Decimal));
-            } else if(validator is LengthValidator) {
-                var lengthRule = ConstructStringLengthRule((LengthValidator)validator);
-                if (lengthRule != null)
-                    result.Add(lengthRule);
-            }
-            else if (validator is RangeValidator) {
-                var rangeRule = ConstructRangeRule((RangeValidator) validator);
-                if (rangeRule != null)
-                    result.Add(rangeRule);
-            }
-            else if (validator is EmailValidator) {
-                result.Add(new DataTypeRule(DataTypeRule.DataType.EmailAddress));
-            }
-            else if (validator is RegularExpressionValidator)
-            {
-                var regularExpressionValidator = (RegularExpressionValidator)validator;
-                result.Add(new RegularExpressionRule(regularExpressionValidator.Expression, regularExpressionValidator.RegexRule.Options));
-            }
-
-            return result; 
         }
 
         private static StringLengthRule ConstructStringLengthRule(LengthValidator lengthValidator)

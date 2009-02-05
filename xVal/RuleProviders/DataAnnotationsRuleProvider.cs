@@ -10,26 +10,22 @@ using System.Linq;
 
 namespace xVal.RuleProviders
 {
-    // Could be moved out into an external assembly to break the dependency on System.ComponentModel.DataAnnotations
-    // (since this is really a plugin)
     public class DataAnnotationsRuleProvider : PropertyAttributeRuleProviderBase<ValidationAttribute>
-    {
-        private readonly Func<Type, TypeDescriptionProvider> metadataProviderFactory; // Yes, it's a factory factory factory. Just trying to be consistent with the Dynamic Data API (http://mattberseth.com/blog/2008/08/dynamic_data_and_custom_metada.html)
+    {        
         private static readonly Type[] NumericTypes = new[] { typeof(int), typeof(double), typeof(decimal), typeof(float) };
+        private readonly RuleEmitterList<ValidationAttribute> ruleEmitters = new RuleEmitterList<ValidationAttribute>();
 
-        public DataAnnotationsRuleProvider()
-            : this(x => new AssociatedMetadataTypeTypeDescriptionProvider(x))
+        public DataAnnotationsRuleProvider() : this(null)
         {
         }
 
-        public DataAnnotationsRuleProvider(Func<Type, TypeDescriptionProvider> metadataProviderFactory)
+        public DataAnnotationsRuleProvider(Func<Type, TypeDescriptionProvider> metadataProviderFactory) : base(metadataProviderFactory)
         {
-            this.metadataProviderFactory = metadataProviderFactory;
-        }
-
-        protected override TypeDescriptionProvider GetTypeDescriptionProvider(Type type)
-        {
-            return metadataProviderFactory(type);
+            ruleEmitters.AddSingle<RequiredAttribute>(x => new RequiredRule());
+            ruleEmitters.AddSingle<StringLengthAttribute>(x => new StringLengthRule(null, x.MaximumLength));
+            ruleEmitters.AddSingle<RangeAttribute>(ConvertRangeAttribute);
+            ruleEmitters.AddSingle<DataTypeAttribute>(ConvertDataTypeAttribute);
+            ruleEmitters.AddSingle<RegularExpressionAttribute>(x => new RegularExpressionRule(x.Pattern));
         }
 
         protected override IEnumerable<RuleBase> GetRulesFromProperty(PropertyDescriptor propertyDescriptor)
@@ -55,27 +51,12 @@ namespace xVal.RuleProviders
             return Nullable.GetUnderlyingType(type) ?? type;
         }
 
-        protected override RuleBase MakeValidationRuleFromAttribute(ValidationAttribute att)
+        protected override IEnumerable<RuleBase> MakeValidationRulesFromAttribute(ValidationAttribute att)
         {
-            RuleBase result = null;
-
-            if (att is RequiredAttribute)
-                result = new RequiredRule();
-            else if (att is StringLengthAttribute)
-                result = new StringLengthRule(null, ((StringLengthAttribute) att).MaximumLength);
-            else if (att is RangeAttribute)
-                result = ConvertRangeAttribute((RangeAttribute) att);
-            else if (att is DataTypeAttribute)
-                result = ConvertDataTypeAttribute((DataTypeAttribute) att);
-            else if (att is RegularExpressionAttribute)
-                result = new RegularExpressionRule(((RegularExpressionAttribute) att).Pattern);
-
-            if(result != null) {
-                ApplyErrorMessage(att, result);
-                return result;
-            }
-
-            return null;
+            var rules = ruleEmitters.EmitRules(att);
+            foreach (var rule in rules)
+                ApplyErrorMessage(att, rule);
+            return rules;
         }
 
         private static void ApplyErrorMessage(ValidationAttribute att, RuleBase result)

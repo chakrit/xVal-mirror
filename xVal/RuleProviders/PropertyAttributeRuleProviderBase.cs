@@ -7,7 +7,7 @@ using xVal.Rules;
 
 namespace xVal.RuleProviders
 {
-    public abstract class PropertyAttributeRuleProviderBase<TAttribute> : IRuleProvider where TAttribute : Attribute
+    public abstract class PropertyAttributeRuleProviderBase<TAttribute> : IRulesProvider where TAttribute : Attribute
     {
         public RuleSet GetRulesFromType(Type type)
         {

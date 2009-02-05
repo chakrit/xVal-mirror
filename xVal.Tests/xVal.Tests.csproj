@@ -39,6 +39,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalAssemblies\Moq.dll</HintPath>
     </Reference>
+    <Reference Include="NHibernate.Validator, Version=1.0.0.4000, Culture=neutral, PublicKeyToken=70154e18752585bd, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\RulesProviders\NHibernateValidator\ExternalAssemblies\NHibernate.Validator.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -70,6 +74,7 @@
     <Compile Include="HtmlHelpers\JsonValidationConfigFormatterTests.cs" />
     <Compile Include="HtmlHelpers\XmlValidationConfigFormatterTests.cs" />
     <Compile Include="RuleProviders\CastleValidatorRulesProviderTests.cs" />
+    <Compile Include="RuleProviders\NHibernateValidatorRulesProviderTests.cs" />
     <Compile Include="Rules\RuleBaseTests.cs" />
     <Compile Include="Rules\RulesTests.cs" />
     <Compile Include="ServerSide\RulesExceptionTests.cs" />
@@ -83,6 +88,14 @@
     <Compile Include="TestHelpers\RulesProviderTestHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\RulesProviders\CastleValidator\CastleValidator.csproj">
+      <Project>{9272C327-7ED3-4765-B67C-B84C39E08EBC}</Project>
+      <Name>CastleValidator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RulesProviders\NHibernateValidator\NHibernateValidator.csproj">
+      <Project>{200FC12B-F9F0-49E9-9165-D78AED771159}</Project>
+      <Name>NHibernateValidator</Name>
+    </ProjectReference>
     <ProjectReference Include="..\xVal\xVal.csproj">
       <Project>{37DCF65B-BF7A-422A-8A89-A591B43FC26D}</Project>
       <Name>xVal</Name>

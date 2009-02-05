@@ -16,7 +16,7 @@ namespace xVal.Tests.RuleProviders
         {
             // Arrange
             var arbitraryType = this.GetType();
-            var mockRuleProvider = new Moq.Mock<IRuleProvider>();
+            var mockRuleProvider = new Moq.Mock<IRulesProvider>();
             mockRuleProvider.Expect(x => x.GetRulesFromType(arbitraryType))
                             .Returns(RuleSet.Empty);
 

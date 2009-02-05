@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Reflection;
 using Castle.Components.Validator;
 using System.Linq;
+using xVal.RuleProviders;
 using xVal.Rules;
 
-namespace xVal.RuleProviders
+namespace xVal.RulesProviders.CastleValidator
 {
-    public class CastleValidatorRulesProvider : IRuleProvider
+    public class CastleValidatorRulesProvider : IRulesProvider
     {
         private readonly IValidatorRegistry registry;
         private readonly ValidatorRunner runner;
@@ -78,9 +79,9 @@ namespace xVal.RuleProviders
                 return new StringLengthRule(lengthValidator.ExactLength, lengthValidator.ExactLength);
             else if((lengthValidator.MinLength != int.MaxValue) || (lengthValidator.MaxLength != int.MaxValue)) {
                 return new StringLengthRule(
-                               /* Min length */ lengthValidator.MinLength == int.MinValue ? (int?)null : lengthValidator.MinLength,
-                                                /* Min length */ lengthValidator.MaxLength == int.MaxValue ? (int?)null : lengthValidator.MaxLength
-                               );
+                    /* Min length */ lengthValidator.MinLength == int.MinValue ? (int?)null : lengthValidator.MinLength,
+                                     /* Min length */ lengthValidator.MaxLength == int.MaxValue ? (int?)null : lengthValidator.MaxLength
+                    );
             }
             return null;
         }
@@ -95,8 +96,8 @@ namespace xVal.RuleProviders
             object minValue = rangeValidatorMinField.GetValue(validator);
             object maxValue = rangeValidatorMaxField.GetValue(validator);
             switch (validator.Type) {
-                // RangeValidator's convention is to use type.MinValue/type.MaxValue/type.Empty to
-                // signal "no boundary at this end", whereas xVal uses null.
+                    // RangeValidator's convention is to use type.MinValue/type.MaxValue/type.Empty to
+                    // signal "no boundary at this end", whereas xVal uses null.
                 case RangeValidationType.Integer:
                     var minInt = (int) minValue == int.MinValue ? (int?) null : (int) minValue;
                     var maxInt = (int) maxValue == int.MaxValue ? (int?) null : (int) maxValue;

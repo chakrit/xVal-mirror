@@ -12,7 +12,7 @@ namespace xVal.Tests.TestHelpers
 {
     public static class RulesProviderTestHelpers
     {
-        public static TRule TestConversion<TAttribute, TRule>(IRuleProvider ruleProvider, params object[] attributeConstructorParams)
+        public static TRule TestConversion<TAttribute, TRule>(IRulesProvider ruleProvider, params object[] attributeConstructorParams)
             where TAttribute : Attribute
             where TRule : RuleBase
         {
@@ -21,7 +21,7 @@ namespace xVal.Tests.TestHelpers
             return propertyRules.Single();
         }
 
-        public static IEnumerable<TRule> TestConversionToMultipleRules<TAttribute, TRule>(IRuleProvider ruleProvider, params object[] attributeConstructorParams)
+        public static IEnumerable<TRule> TestConversionToMultipleRules<TAttribute, TRule>(IRulesProvider ruleProvider, params object[] attributeConstructorParams)
             where TAttribute : Attribute
             where TRule : RuleBase
         {

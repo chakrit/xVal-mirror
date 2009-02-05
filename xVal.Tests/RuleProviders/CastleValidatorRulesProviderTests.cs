@@ -5,6 +5,7 @@ using Castle.Components.Validator;
 using Xunit;
 using xVal.RuleProviders;
 using xVal.Rules;
+using xVal.RulesProviders.CastleValidator;
 using xVal.Tests.TestHelpers;
 
 namespace xVal.Tests.RuleProviders
@@ -14,7 +15,7 @@ namespace xVal.Tests.RuleProviders
         [Fact]
         public void ImplementsIRuleProvider()
         {
-            IRuleProvider instance = new CastleValidatorRulesProvider();
+            IRulesProvider instance = new CastleValidatorRulesProvider();
         }
 
         [Fact]

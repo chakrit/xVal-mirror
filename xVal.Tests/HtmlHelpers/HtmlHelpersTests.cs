@@ -42,7 +42,7 @@ namespace xVal.Tests.HtmlHelpers
             // Arrange
             var html = new HtmlHelperMocks<object>().HtmlHelper;
             var arbitraryType = typeof (DateTime);
-            var ruleProvider = new Moq.Mock<IRuleProvider>();
+            var ruleProvider = new Moq.Mock<IRulesProvider>();
             var rules = new RuleSet(new[] { "someProperty" }.ToLookup(x => x, x => (RuleBase)new RequiredRule()));
             ruleProvider.Expect(x => x.GetRulesFromType(arbitraryType)).Returns(rules);
             ActiveRuleProviders.Providers.Clear();

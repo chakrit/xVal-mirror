@@ -29,7 +29,7 @@ xVal.Plugins["AspNetNative"] = {
             var fieldRules = rulesConfig.Fields[i].FieldRules;
 
             // Is there a matching DOM element?
-            var elemId = (elementPrefix ? elementPrefix + "." : "") + fieldName;
+            var elemId = this._makeAspNetMvcHtmlHelperID((elementPrefix ? elementPrefix + "." : "") + fieldName);
             var elem = document.getElementById(elemId);
 
             if (elem) {
@@ -45,6 +45,11 @@ xVal.Plugins["AspNetNative"] = {
         Page_ValidationActive = false;
         if (typeof (ValidatorOnLoad) == "function")
             ValidatorOnLoad();
+    },
+
+    _makeAspNetMvcHtmlHelperID: function(fullyQualifiedModelName) {
+        // If you have changed HtmlHelper.IdAttributeDotReplacement from "_" to something else, then you must also change the following line to match
+        return fullyQualifiedModelName.replace(".", "_");
     },
 
     _attachRuleToDOMElement: function(ruleName, ruleParams, errorText, element) {

@@ -18,7 +18,7 @@ namespace xVal.Tests.RuleProviders
         [Fact]
         public void ImplementsIRuleProvider()
         {
-            IRuleProvider instance = new DataAnnotationsRuleProvider();
+            IRulesProvider instance = new DataAnnotationsRuleProvider();
         }
 
         [Fact]

@@ -8,7 +8,7 @@ namespace xVal
 {
     public static class ActiveRuleProviders
     {
-        public static IList<IRuleProvider> Providers = new List<IRuleProvider> {
+        public static IList<IRulesProvider> Providers = new List<IRulesProvider> {
             new DataAnnotationsRuleProvider()
         };
 

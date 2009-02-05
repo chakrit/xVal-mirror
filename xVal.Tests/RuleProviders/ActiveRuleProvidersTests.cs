@@ -44,7 +44,7 @@ namespace xVal.Tests.RuleProviders
         public void GetRulesForType_Can_Handle_Provider_Returning_NULL()
         {
             // Arrange
-            var mockProvider = new Moq.Mock<IRuleProvider>();
+            var mockProvider = new Moq.Mock<IRulesProvider>();
             mockProvider.Expect(x => x.GetRulesFromType(typeof(double)))
                         .Returns((RuleSet)null);
             ActiveRuleProviders.Providers.Clear();
@@ -58,10 +58,10 @@ namespace xVal.Tests.RuleProviders
             Assert.Empty(rules.Keys);
         }
 
-        private static IRuleProvider MakeMockRuleProvider(Type forModelType, params string[] rulePropertyNames)
+        private static IRulesProvider MakeMockRuleProvider(Type forModelType, params string[] rulePropertyNames)
         {
             var ruleset = new RuleSet(rulePropertyNames.ToLookup(x => x, x => (RuleBase)new RequiredRule()));
-            var mockProvider = new Moq.Mock<IRuleProvider>();
+            var mockProvider = new Moq.Mock<IRulesProvider>();
             mockProvider.Expect(x => x.GetRulesFromType(forModelType)).Returns(ruleset);
             return mockProvider.Object;
         }

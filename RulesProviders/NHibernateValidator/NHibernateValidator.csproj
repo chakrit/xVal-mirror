@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{37DCF65B-BF7A-422A-8A89-A591B43FC26D}</ProjectGuid>
+    <ProjectGuid>{200FC12B-F9F0-49E9-9165-D78AED771159}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>xVal</RootNamespace>
-    <AssemblyName>xVal</AssemblyName>
+    <RootNamespace>xVal.RulesProviders.NHibernateValidator</RootNamespace>
+    <AssemblyName>xVal.RulesProviders.NHibernateValidator</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -31,14 +31,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NHibernate.Validator, Version=1.0.0.4000, Culture=neutral, PublicKeyToken=70154e18752585bd, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>ExternalAssemblies\NHibernate.Validator.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
     <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Web.Extensions">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Xml.Linq">
@@ -49,29 +47,16 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="System.Web.Mvc" />
-    <Reference Include="System.Web.Routing" />
-    <Reference Include="System.Web.Abstractions" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActiveRuleProviders.cs" />
-    <Compile Include="Html\JsonValidationConfigFormatter.cs" />
-    <Compile Include="Html\XmlValidationConfigFormatter.cs" />
-    <Compile Include="Html\IValidationConfigFormatter.cs" />
-    <Compile Include="Html\ValidationHelpers.cs" />
+    <Compile Include="NHibernateValidatorRulesProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RuleProviders\DataAnnotationsRuleProvider.cs" />
-    <Compile Include="RuleProviders\IRulesProvider.cs" />
-    <Compile Include="RuleProviders\PropertyAttributeRuleProviderBase.cs" />
-    <Compile Include="RuleProviders\RuleSet.cs" />
-    <Compile Include="Rules\DataTypeRule.cs" />
-    <Compile Include="Rules\RangeRule.cs" />
-    <Compile Include="Rules\RegularExpressionRule.cs" />
-    <Compile Include="Rules\RequiredRule.cs" />
-    <Compile Include="Rules\RuleBase.cs" />
-    <Compile Include="Rules\StringLengthRule.cs" />
-    <Compile Include="ServerSide\ErrorInfo.cs" />
-    <Compile Include="ServerSide\RulesException.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\xVal\xVal.csproj">
+      <Project>{37DCF65B-BF7A-422A-8A89-A591B43FC26D}</Project>
+      <Name>xVal</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

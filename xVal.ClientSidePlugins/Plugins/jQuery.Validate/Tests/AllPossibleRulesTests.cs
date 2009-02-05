@@ -122,18 +122,19 @@ namespace xVal.ClientSidePlugins.Plugins.jQuery.Validate.Tests
         private void TestFieldValidation(string inputField, string invalidValue, string validValue, string expectedFailureMessage)
         {
             Browser.Open(Url);
+            string inputFieldID = inputField.Replace(".", "_"); // Match ASP.NET MVC behavior
 
             // Force validation failure
-            Browser.Type(inputField, invalidValue);
-            Browser.KeyUp(inputField, "\t");
+            Browser.Type(inputFieldID, invalidValue);
+            Browser.KeyUp(inputFieldID, "\t");
             Browser.Click("//input[@type='submit']");
-            var failureMessageElementLocator = "//span[@htmlfor='" + inputField + "']";
+            var failureMessageElementLocator = "//span[@htmlfor='" + inputFieldID + "']";
             AssertPresentAndVisible(Browser, failureMessageElementLocator);
             Assert.Equal(expectedFailureMessage, Browser.GetText(failureMessageElementLocator));
 
             // Now try to satisfy validation
-            Browser.Type(inputField, validValue);
-            Browser.KeyUp(inputField, "\t");
+            Browser.Type(inputFieldID, validValue);
+            Browser.KeyUp(inputFieldID, "\t");
             AssertNotPresentAndVisible(Browser, failureMessageElementLocator);
         }
 

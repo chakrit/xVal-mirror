@@ -2,7 +2,7 @@ using System;
 
 namespace xVal.RuleProviders
 {
-    public interface IRuleProvider
+    public interface IRulesProvider
     {
         RuleSet GetRulesFromType(Type type);
     }

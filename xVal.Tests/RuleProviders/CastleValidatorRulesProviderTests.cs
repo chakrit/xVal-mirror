@@ -151,6 +151,22 @@ namespace xVal.Tests.RuleProviders
             Assert.Equal("mypattern", rule.Pattern);
         }
 
+        [Fact]
+        public void Converts_ValidateSameAsAttribute_To_Comparison_Equals()
+        {
+            var rule = TestConversion<ValidateSameAsAttribute, ComparisonRule>("myProp");
+            Assert.Equal("myProp", rule.PropertyToCompare);
+            Assert.Equal(ComparisonRule.Operator.Equals, rule.ComparisonOperator);
+        }
+
+        [Fact]
+        public void Converts_ValidateNotSameAsAttribute_To_Comparison_DoesNotEqual()
+        {
+            var rule = TestConversion<ValidateNotSameAsAttribute, ComparisonRule>("myProp");
+            Assert.Equal("myProp", rule.PropertyToCompare);
+            Assert.Equal(ComparisonRule.Operator.DoesNotEqual, rule.ComparisonOperator);
+        }
+
         private static TRule TestConversion<TAttribute, TRule>(params object[] attributeConstructorParams)
             where TAttribute : AbstractValidationAttribute
             where TRule : RuleBase

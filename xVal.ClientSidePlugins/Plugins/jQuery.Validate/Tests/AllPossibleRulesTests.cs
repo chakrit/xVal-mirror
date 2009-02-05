@@ -1,3 +1,4 @@
+using System;
 using Selenium;
 using Xunit;
 using xVal.ClientSidePlugins.TestHelpers;
@@ -119,9 +120,34 @@ namespace xVal.ClientSidePlugins.Plugins.jQuery.Validate.Tests
             TestFieldValidation("myprefix.StringLength_Range_Field", "abcdefgh", "abcdefg", "Please enter a value between 4 and 7 characters long.");
         }
 
+        [Fact]
+        public void Comparison_Equals_Enforced()
+        {
+            TestFieldValidation("myprefix.Comparison_Equals", "bla", "blah", "This value must be the same as RequiredField.",
+                // Setup first: populate the RequiredField box first
+                browser => browser.Type("myprefix_RequiredField", "blah")
+            );
+        }
+
+        [Fact]
+        public void Comparison_DoesNotEqual_Enforced()
+        {
+            TestFieldValidation("myprefix.Comparison_DoesNotEqual", "blah", "blah2", "This value must be different from RequiredField.",
+                // Setup first: populate the RequiredField box first
+                browser => browser.Type("myprefix_RequiredField", "blah")
+            );
+        }
+
         private void TestFieldValidation(string inputField, string invalidValue, string validValue, string expectedFailureMessage)
         {
+            TestFieldValidation(inputField, invalidValue, validValue, expectedFailureMessage, null);
+        }
+
+        private void TestFieldValidation(string inputField, string invalidValue, string validValue, string expectedFailureMessage, Action<ISelenium> additionalSetup)
+        {
             Browser.Open(Url);
+            if (additionalSetup != null)
+                additionalSetup(Browser);
             string inputFieldID = inputField.Replace(".", "_"); // Match ASP.NET MVC behavior
 
             // Force validation failure

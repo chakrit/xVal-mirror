@@ -13,6 +13,11 @@ using xVal.Rules;
 
 namespace xVal.RulesProviders.NHibernateValidator
 {
+    /// <summary>
+    /// Note: This provider is incomplete and is not yet intended to be used.
+    /// Ideally it would be in a separate branch at the moment, but I don't think that's possible.
+    /// </summary>
+    [Obsolete("Don't use NHibernateValidatorRulesProvider yet - it's incomplete.")]
     public class NHibernateValidatorRulesProvider : CachingRulesProvider
     {
         private readonly ValidatorMode configMode;

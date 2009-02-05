@@ -42,7 +42,9 @@ namespace xVal.ClientSidePlugins.TestHelpers
                     new KeyValuePair<string, RuleBase>("Range_DateTime_Field", new RangeRule(new DateTime(2001, 2, 19, 17, 04, 59), (DateTime?)null)),
                     new KeyValuePair<string, RuleBase>("StringLength_Min_Field", new StringLengthRule(3, null)),
                     new KeyValuePair<string, RuleBase>("StringLength_Max_Field", new StringLengthRule(null, 6)),
-                    new KeyValuePair<string, RuleBase>("StringLength_Range_Field", new StringLengthRule(4, 7))
+                    new KeyValuePair<string, RuleBase>("StringLength_Range_Field", new StringLengthRule(4, 7)),
+                    new KeyValuePair<string, RuleBase>("Comparison_Equals", new ComparisonRule("RequiredField", ComparisonRule.Operator.Equals)),
+                    new KeyValuePair<string, RuleBase>("Comparison_DoesNotEqual", new ComparisonRule("RequiredField", ComparisonRule.Operator.DoesNotEqual)),
                 };
                 return new RuleSet(rules.ToLookup(x => x.Key, x => x.Value));
             }

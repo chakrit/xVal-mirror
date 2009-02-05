@@ -37,7 +37,7 @@ xVal.Plugins["AspNetNative"] = {
                     var ruleName = fieldRules[j].RuleName;
                     var ruleParams = fieldRules[j].RuleParameters;
                     var errorText = (typeof (fieldRules[j].Message) == 'undefined' ? null : fieldRules[j].Message);
-                    this._attachRuleToDOMElement(ruleName, ruleParams, errorText, elem);
+                    this._attachRuleToDOMElement(ruleName, ruleParams, errorText, elem, elementPrefix);
                 }
             }
         }
@@ -52,8 +52,8 @@ xVal.Plugins["AspNetNative"] = {
         return fullyQualifiedModelName.replace(".", "_");
     },
 
-    _attachRuleToDOMElement: function(ruleName, ruleParams, errorText, element) {
-        var ruleConfig = this._getAspNetRuleConfig(ruleName, ruleParams, errorText);
+    _attachRuleToDOMElement: function(ruleName, ruleParams, errorText, element, elementPrefix) {
+        var ruleConfig = this._getAspNetRuleConfig(ruleName, ruleParams, errorText, elementPrefix);
         if (ruleConfig == null)
             return;
 
@@ -78,7 +78,7 @@ xVal.Plugins["AspNetNative"] = {
             messageContainer[ruleConfig.params[i].name] = ruleConfig.params[i].value;
     },
 
-    _getAspNetRuleConfig: function(ruleName, ruleParams, fixedErrorText) {
+    _getAspNetRuleConfig: function(ruleName, ruleParams, fixedErrorText, elementPrefix) {
         switch (ruleName) {
             case "Required":
                 return {
@@ -192,6 +192,31 @@ xVal.Plugins["AspNetNative"] = {
                     params: [{ name: "pattern", value: pattern },
                              { name: "options", value: "i"}],
                     errorMessage: fixedErrorText || message
+                };
+            case "Comparison":
+                // See if there really is an element to compare to
+                var elemToCompareId = this._makeAspNetMvcHtmlHelperID((elementPrefix ? elementPrefix + "." : "") + ruleParams.PropertyToCompare);
+                if (document.getElementById(elemToCompareId) == null)
+                    return;
+                    
+                // See if there is an AspNetNative equivalent of the requested operator
+                var operator =   ruleParams.ComparisonOperator == "Equals" ? "Equal"
+                               : ruleParams.ComparisonOperator == "DoesNotEqual" ? "NotEqual"
+                               : null;
+                if (operator == null)
+                    return;
+
+                var message = fixedErrorText;
+                if ((message == null) && (ruleParams.ComparisonOperator == "Equals"))
+                    message = "This value must be the same as " + ruleParams.PropertyToCompare + ".";
+                if ((message == null) && (ruleParams.ComparisonOperator == "DoesNotEqual"))
+                    message = "This value must be different from " + ruleParams.PropertyToCompare + ".";
+
+                return {
+                    evaluationFunction: "CompareValidatorEvaluateIsValid",
+                    params: [{ name: "controltocompare", value: elemToCompareId },
+                             { name: "operator", value: operator}],
+                    errorMessage: message
                 };
         }
         return null;

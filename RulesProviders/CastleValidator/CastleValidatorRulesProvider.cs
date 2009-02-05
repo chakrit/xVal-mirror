@@ -45,6 +45,8 @@ namespace xVal.RulesProviders.CastleValidator
             ruleEmitters.AddSingle<RangeValidator>(ConstructRangeRule);
             ruleEmitters.AddSingle<EmailValidator>(x => new DataTypeRule(DataTypeRule.DataType.EmailAddress));
             ruleEmitters.AddSingle<RegularExpressionValidator>(x => new RegularExpressionRule(x.Expression, x.RegexRule.Options));
+            ruleEmitters.AddSingle<SameAsValidator>(x => new ComparisonRule(x.PropertyToCompare, ComparisonRule.Operator.Equals));
+            ruleEmitters.AddSingle<NotSameAsValidator>(x => new ComparisonRule(x.PropertyToCompare, ComparisonRule.Operator.DoesNotEqual));
         }
 
         protected override RuleSet GetRulesFromTypeCore(Type type)

@@ -34,7 +34,7 @@ var xVal = xVal || {
                         var ruleName = fieldRules[j].RuleName;
                         var ruleParams = fieldRules[j].RuleParameters;
                         var errorText = (typeof (fieldRules[j].Message) == 'undefined' ? null : fieldRules[j].Message);
-                        this._attachRuleToDOMElement(ruleName, ruleParams, errorText, $(elem));
+                        this._attachRuleToDOMElement(ruleName, ruleParams, errorText, $(elem), elementPrefix);
                     }
                 }
             }
@@ -45,7 +45,7 @@ var xVal = xVal || {
             return fullyQualifiedModelName.replace(".", "_");
         },
 
-        _attachRuleToDOMElement: function(ruleName, ruleParams, errorText, element) {
+        _attachRuleToDOMElement: function(ruleName, ruleParams, errorText, element, elementPrefix) {
             var parentForm = element.parents("form");
             if (parentForm.length != 1)
                 alert("Error: Element " + element.attr("id") + " is not in a form");
@@ -140,6 +140,15 @@ var xVal = xVal || {
                 case "RegEx":
                     options.xVal_regex = [ruleParams.Pattern, ruleParams.Options];
                     if (errorText != null) options.messages = { xVal_regex: errorText };
+                    break;
+
+                case "Comparison":
+                    var elemToCompareId = this._makeAspNetMvcHtmlHelperID((elementPrefix ? elementPrefix + "." : "") + ruleParams.PropertyToCompare);
+                    var elemToCompare = document.getElementById(elemToCompareId);
+                    if (elemToCompare != null) {
+                        options.xVal_comparison = [ruleParams.PropertyToCompare, elemToCompare, ruleParams.ComparisonOperator];
+                        if (errorText != null) options.messages = { xVal_comparison: errorText };
+                    }
                     break;
             }
 
@@ -240,6 +249,24 @@ var xVal = xVal || {
                     return (sum % 10) == 0;
                 }, function(params) {
                     return "Please enter a valid credit card number.";
+                });
+
+                jQuery.validator.addMethod("xVal_comparison", function(value, element, params) {
+                    if (this.optional(element)) return true;
+                    var elemToCompare = params[1];
+                    var comparisonOperator = params[2];
+                    switch (comparisonOperator) { 
+                        case "Equals": return value == elemToCompare.value;
+                        case "DoesNotEqual": return value != elemToCompare.value;
+                    }
+                    return true; // Ignore unrecognized operator
+                }, function(params) {
+                    var propertyToCompareName = params[0];
+                    var comparisonOperator = params[2];
+                    switch (comparisonOperator) {
+                        case "Equals": return "This value must be the same as " + propertyToCompareName + ".";
+                        case "DoesNotEqual": return "This value must be different from " + propertyToCompareName + ".";
+                    }
                 });
             }
         }

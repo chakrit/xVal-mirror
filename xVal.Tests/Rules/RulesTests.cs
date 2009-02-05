@@ -133,5 +133,15 @@ namespace xVal.Tests.Rules
             Assert.Equal("myPattern", parameters["Pattern"]);
             Assert.Equal("im", parameters["Options"]);
         }
+
+        [Fact]
+        public void ComparisonRule_Takes_PropertyToCompare_And_Type()
+        {
+            var rule = new ComparisonRule("password1", ComparisonRule.Operator.Equals);
+            var parameters = rule.ListParameters();
+            Assert.Equal(2, parameters.Count);
+            Assert.Equal("password1", parameters["PropertyToCompare"]);
+            Assert.Equal("Equals", parameters["ComparisonOperator"]);
+        }
     }
 }

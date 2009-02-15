@@ -13,11 +13,6 @@ using xVal.Rules;
 
 namespace xVal.RulesProviders.NHibernateValidator
 {
-    /// <summary>
-    /// Note: This provider is incomplete and is not yet intended to be used.
-    /// Ideally it would be in a separate branch at the moment, but I don't think that's possible.
-    /// </summary>
-    [Obsolete("Don't use NHibernateValidatorRulesProvider yet - it's incomplete.")]
     public class NHibernateValidatorRulesProvider : CachingRulesProvider
     {
         private readonly ValidatorMode configMode;
@@ -27,7 +22,15 @@ namespace xVal.RulesProviders.NHibernateValidator
         {
             this.configMode = configMode;
 
-            ruleEmitters.AddSingle<LengthAttribute>(ConvertLengthAttributeToStringLengthRule);
+            ruleEmitters.AddSingle<LengthAttribute>(x => new StringLengthRule(x.Min, x.Max));
+            ruleEmitters.AddSingle<MinAttribute>(x => new RangeRule(x.Value, null));
+            ruleEmitters.AddSingle<MaxAttribute>(x => new RangeRule(null, x.Value));
+            ruleEmitters.AddSingle<RangeAttribute>(x => new RangeRule(x.Min, x.Max));
+            ruleEmitters.AddSingle<NotEmptyAttribute>(x => new RequiredRule());
+            ruleEmitters.AddSingle<NotNullNotEmptyAttribute>(x => new RequiredRule());
+            ruleEmitters.AddSingle<PatternAttribute>(x => new RegularExpressionRule(x.Regex, x.Flags));
+            ruleEmitters.AddSingle<EmailAttribute>(x => new DataTypeRule(DataTypeRule.DataType.EmailAddress));
+            ruleEmitters.AddSingle<DigitsAttribute>(MakeDigitsRule);
         }
 
         protected override RuleSet GetRulesFromTypeCore(Type type)
@@ -54,9 +57,15 @@ namespace xVal.RulesProviders.NHibernateValidator
             }
         }
 
-        private static StringLengthRule ConvertLengthAttributeToStringLengthRule(LengthAttribute att)
+        private RegularExpressionRule MakeDigitsRule(DigitsAttribute att)
         {
-            return new StringLengthRule(att.Min, att.Max);
+            if (att == null) throw new ArgumentNullException("att");
+            string pattern;
+            if (att.FractionalDigits < 1)
+                pattern = string.Format(@"\d{{,{0}}}", att.IntegerDigits);
+            else
+                pattern = string.Format(@"\d{{,{0}}}\.\d{{,{1}}}", att.IntegerDigits, att.FractionalDigits);
+            return new RegularExpressionRule(pattern);
         }
 
         private static class ClassMappingFactory

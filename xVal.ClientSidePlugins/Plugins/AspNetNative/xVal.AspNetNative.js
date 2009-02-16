@@ -1,22 +1,23 @@
-﻿// xVal.AspNetNative.js
+﻿// Common initialization
+var xVal = xVal || {};
+xVal.Plugins = xVal.Plugins || {};
+xVal.Messages = xVal.Messages || {};
+xVal.AttachValidator = function(elementPrefix, rulesConfig, pluginName) {
+    if (pluginName != null)
+        this.Plugins[pluginName].AttachValidator(elementPrefix, rulesConfig);
+    else
+        for (var key in this.Plugins) {
+        this.Plugins[key].AttachValidator(elementPrefix, rulesConfig);
+        return;
+    }
+};
+
+// xVal.AspNetNative.js
 // An xVal plugin to enable support for ASP.NET WebForms native client-side validation
 // http://xval.codeplex.com/
 // (c) 2009 Steven Sanderson
 // License: Microsoft Public License (Ms-PL) (http://www.opensource.org/licenses/ms-pl.html)
-
-var xVal = xVal || {
-    Plugins: {},
-    AttachValidator: function(elementPrefix, rulesConfig, pluginName) {
-        if (pluginName != null)
-            this.Plugins[pluginName].AttachValidator(elementPrefix, rulesConfig);
-        else
-            for (var key in this.Plugins) {
-            this.Plugins[key].AttachValidator(elementPrefix, rulesConfig);
-            return;
-        }
-    }
-};
-
+    
 var Page_Validators;
 var Page_ValidationActive;
 

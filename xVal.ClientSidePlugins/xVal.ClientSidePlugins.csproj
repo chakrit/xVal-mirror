@@ -82,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Content Include="Messages\xVal.Messages.en-US.js" />
     <Content Include="Plugins\AspNetNative\AllPossibleRules.aspx" />
     <Content Include="Plugins\AspNetNative\xVal.AspNetNative.js" />
     <Content Include="Plugins\jQuery.Validate\jquery.validate.js" />

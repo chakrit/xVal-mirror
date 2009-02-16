@@ -1,21 +1,22 @@
-﻿// xVal.jquery.validate.js
+﻿// Common initialization
+var xVal = xVal || {};
+xVal.Plugins = xVal.Plugins || {};
+xVal.Messages = xVal.Messages || {};
+xVal.AttachValidator = function(elementPrefix, rulesConfig, pluginName) {
+    if (pluginName != null)
+        this.Plugins[pluginName].AttachValidator(elementPrefix, rulesConfig);
+    else
+        for (var key in this.Plugins) {
+        this.Plugins[key].AttachValidator(elementPrefix, rulesConfig);
+        return;
+    }
+};
+
+// xVal.jquery.validate.js
 // An xVal plugin to enable support for jQuery Validate
 // http://xval.codeplex.com/
 // (c) 2009 Steven Sanderson
 // License: Microsoft Public License (Ms-PL) (http://www.opensource.org/licenses/ms-pl.html)
-
-var xVal = xVal || {
-    Plugins: {},
-    AttachValidator: function(elementPrefix, rulesConfig, pluginName) {
-        if (pluginName != null)
-            this.Plugins[pluginName].AttachValidator(elementPrefix, rulesConfig);
-        else
-            for (var key in this.Plugins) {
-                this.Plugins[key].AttachValidator(elementPrefix, rulesConfig);
-                return;
-            }
-    }
-};
 
 (function($) {
     xVal.Plugins["jquery.validate"] = {
@@ -57,34 +58,37 @@ var xVal = xVal || {
             switch (ruleName) {
                 case "Required":
                     options.required = true;
-                    if (errorText != null) options.messages = { required: errorText };
+                    options.messages = { required: errorText || xVal.Messages.Required };
                     break;
 
                 case "Range":
                     if (ruleParams.Type == "string") {
                         options.xVal_stringRange = [ruleParams.Min, ruleParams.Max];
-                        if (errorText != null) options.messages = { xVal_stringRange: errorText };
+                        if (errorText != null) options.messages = { xVal_stringRange: $.format(errorText) };
                     }
                     else if (ruleParams.Type == "datetime") {
                         var minDate, maxDate;
                         if (typeof (ruleParams.MinYear) != 'undefined')
                             minDate = new Date(ruleParams.MinYear, ruleParams.MinMonth - 1, ruleParams.MinDay, ruleParams.MinHour, ruleParams.MinMinute, ruleParams.MinSecond);
-                        if (typeof (ruleParams.MaxYear) != 'undefined')
+                        else if (typeof (ruleParams.MaxYear) != 'undefined')
                             maxDate = new Date(ruleParams.MaxYear, ruleParams.MaxMonth - 1, ruleParams.MaxDay, ruleParams.MaxHour, ruleParams.MaxMinute, ruleParams.MaxSecond);
                         options.xVal_dateRange = [minDate, maxDate];
-                        if (errorText != null) options.messages = { xVal_dateRange: errorText };
+                        if (errorText != null) options.messages = { xVal_dateRange: $.format(errorText) };
                     }
                     else if (typeof (ruleParams.Min) == 'undefined') {
                         options.max = ruleParams.Max;
-                        if (errorText != null) options.messages = { max: errorText };
+                        errorText = errorText || xVal.Messages.Range_Numeric_Max;
+                        if (errorText != null) options.messages = { max: $.format(errorText) };
                     }
                     else if (typeof (ruleParams.Max) == 'undefined') {
                         options.min = ruleParams.Min;
-                        if (errorText != null) options.messages = { min: errorText };
+                        errorText = errorText || xVal.Messages.Range_Numeric_Min;
+                        if (errorText != null) options.messages = { min: $.format(errorText) };
                     }
                     else {
                         options.range = [ruleParams.Min, ruleParams.Max];
-                        if (errorText != null) options.messages = { range: errorText };
+                        errorText = errorText || xVal.Messages.Range_Numeric_MinMax;
+                        if (errorText != null) options.messages = { range: $.format(errorText) };
                     }
 
                     break;
@@ -92,15 +96,18 @@ var xVal = xVal || {
                 case "StringLength":
                     if (typeof (ruleParams.MinLength) == 'undefined') {
                         options.maxlength = ruleParams.MaxLength;
-                        if (errorText != null) options.messages = { maxlength: errorText };
+                        errorText = errorText || xVal.Messages.StringLength_Max;
+                        if (errorText != null) options.messages = { maxlength: $.format(errorText) };
                     }
                     else if (typeof (ruleParams.MaxLength) == 'undefined') {
                         options.minlength = ruleParams.MinLength;
-                        if (errorText != null) options.messages = { minlength: errorText };
+                        errorText = errorText || xVal.Messages.StringLength_Min;
+                        if (errorText != null) options.messages = { minlength: $.format(errorText) };
                     }
                     else {
                         options.rangelength = [ruleParams.MinLength, ruleParams.MaxLength];
-                        if (errorText != null) options.messages = { rangelength: errorText };
+                        errorText = errorText || xVal.Messages.StringLength_MinMax;
+                        if (errorText != null) options.messages = { rangelength: $.format(errorText) };
                     }
                     break;
 
@@ -108,45 +115,45 @@ var xVal = xVal || {
                     switch (ruleParams.Type) {
                         case "EmailAddress":
                             options.email = true;
-                            if (errorText != null) options.messages = { email: errorText };
+                            options.messages = { email: errorText || xVal.Messages.DataType_EmailAddress };
                             break;
                         case "Integer":
                             options.xVal_regex = ["^\\-?\\d+$", ""];
-                            options.messages = { xVal_regex: errorText || "Please enter a whole number." };
+                            options.messages = { xVal_regex: errorText || xVal.Messages.DataType_Integer || "Please enter a whole number." };
                             break;
                         case "Decimal":
                             options.number = true;
-                            if (errorText != null) options.messages = { number: errorText };
+                            options.messages = { number: errorText || xVal.Messages.DataType_Decimal };
                             break;
                         case "Date":
                             options.date = true;
-                            if (errorText != null) options.messages = { date: errorText };
+                            options.messages = { date: errorText || xVal.Messages.DataType_Date };
                             break;
                         case "DateTime":
                             options.xVal_regex = ["^\\d{1,2}/\\d{1,2}/(\\d{2}|\\d{4})\\s+\\d{1,2}\\:\\d{2}(\\:\\d{2})?$", ""];
-                            options.messages = { xVal_regex: errorText || "Please enter a valid date and time." };
+                            options.messages = { xVal_regex: errorText || xVal.Messages.DataType_DateTime || "Please enter a valid date and time." };
                             break;
                         case "Currency":
                             options.xVal_regex = ["^\\D?\\s?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$", ""];
-                            options.messages = { xVal_regex: errorText || "Please enter a currency value." };
+                            options.messages = { xVal_regex: errorText || xVal.Messages.DataType_Currency || "Please enter a currency value." };
                             break;
                         case "CreditCardLuhn":
                             options.xVal_creditCardLuhn = true;
-                            if (errorText != null) options.messages = { xVal_creditCardLuhn: errorText };
+                            if(errorText != null) options.messages = { xVal_creditCardLuhn: errorText };
                             break;
                     }
                     break;
 
                 case "RegEx":
                     options.xVal_regex = [ruleParams.Pattern, ruleParams.Options];
-                    if (errorText != null) options.messages = { xVal_regex: errorText };
+                    if(errorText != null) options.messages = { xVal_regex: errorText };
                     break;
 
                 case "Comparison":
                     var elemToCompareId = this._makeAspNetMvcHtmlHelperID((elementPrefix ? elementPrefix + "." : "") + ruleParams.PropertyToCompare);
                     var elemToCompare = document.getElementById(elemToCompareId);
                     if (elemToCompare != null) {
-                        options.xVal_comparison = [ruleParams.PropertyToCompare, elemToCompare, ruleParams.ComparisonOperator];
+                        options.xVal_comparison = [ruleParams.PropertyToCompare, elemToCompare, ruleParams.ComparisonOperator];                        
                         if (errorText != null) options.messages = { xVal_comparison: errorText };
                     }
                     break;
@@ -190,11 +197,11 @@ var xVal = xVal || {
                     return true;
                 }, function(params) {
                     if ((params[0] != null) && (params[1] != null))
-                        return "Please enter a value alphabetically between '" + params[0] + "' and '" + params[1] + "'.";
+                        return $.format(xVal.Messages.Range_String_MinMax || "Please enter a value alphabetically between '{0}' and '{1}'.", params[0], params[1]);
                     else if (params[0] != null)
-                        return "Please enter a value not alphabetically before '" + params[0] + "'.";
+                        return $.format(xVal.Messages.Range_String_Min || "Please enter a value not alphabetically before '{0}'.", params[0]);
                     else
-                        return "Please enter a value not alphabetically after '" + params[1] + "'.";
+                        return $.format(xVal.Messages.Range_String_Max || "Please enter a value not alphabetically after '{0}'.", params[1]);
                 });
 
                 jQuery.validator.addMethod("xVal_dateRange", function(value, element, params) {
@@ -212,7 +219,7 @@ var xVal = xVal || {
                     return true;
                 }, function(params, elem) {
                     if (isNaN(Date.parse(elem.value)))
-                        return "Please enter a valid date in yyyy/mm/dd format.";
+                        return xVal.Messages.DataType_Date || "Please enter a valid date in yyyy/mm/dd format.";
                     var formatDate = function(date) {
                         var result = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDay();
                         if (date.getHours() + date.getMinutes() + date.getSeconds() != 0)
@@ -220,11 +227,11 @@ var xVal = xVal || {
                         return result.replace(/\b(\d)\b/g, '0$1');
                     };
                     if ((params[0] != null) && (params[1] != null))
-                        return "Please enter a date between " + formatDate(params[0]) + " and " + formatDate(params[1]) + ".";
+                        return $.format(xVal.Messages.Range_DateTime_MinMax || "Please enter a date between {0} and {1}.", formatDate(params[0]), formatDate(params[1]));
                     else if (params[0] != null)
-                        return "Please enter a date no earlier than " + formatDate(params[0]) + ".";
+                        return $.format(xVal.Messages.Range_DateTime_Min || "Please enter a date no earlier than {0}.", formatDate(params[0]));
                     else
-                        return "Please enter a date no later than " + formatDate(params[1]) + ".";
+                        return $.format(xVal.Messages.Range_DateTime_Max || "Please enter a date no later than {0}.", formatDate(params[1]));
                 });
 
                 jQuery.validator.addMethod("xVal_regex", function(value, element, params) {
@@ -234,7 +241,7 @@ var xVal = xVal || {
                     var regex = new RegExp(pattern, options);
                     return regex.test(value);
                 }, function(params) {
-                    return "Please enter a valid value."; // Pity we can't be more descriptive
+                    return xVal.Messages.Regex || "This value is invalid."; // Pity we can't be more descriptive
                 });
 
                 jQuery.validator.addMethod("xVal_creditCardLuhn", function(value, element, params) {
@@ -248,14 +255,14 @@ var xVal = xVal || {
                         sum += parseInt(value.charAt(i), 10);
                     return (sum % 10) == 0;
                 }, function(params) {
-                    return "Please enter a valid credit card number.";
+                    return xVal.Messages.DataType_CreditCardLuhn || "Please enter a valid credit card number.";
                 });
 
                 jQuery.validator.addMethod("xVal_comparison", function(value, element, params) {
                     if (this.optional(element)) return true;
                     var elemToCompare = params[1];
                     var comparisonOperator = params[2];
-                    switch (comparisonOperator) { 
+                    switch (comparisonOperator) {
                         case "Equals": return value == elemToCompare.value;
                         case "DoesNotEqual": return value != elemToCompare.value;
                     }
@@ -264,8 +271,8 @@ var xVal = xVal || {
                     var propertyToCompareName = params[0];
                     var comparisonOperator = params[2];
                     switch (comparisonOperator) {
-                        case "Equals": return "This value must be the same as " + propertyToCompareName + ".";
-                        case "DoesNotEqual": return "This value must be different from " + propertyToCompareName + ".";
+                        case "Equals": return $.format(xVal.Messages.Comparison_Equals || "This value must be the same as {0}.", propertyToCompareName);
+                        case "DoesNotEqual": return $.format(xVal.Messages.Comparison_DoesNotEqual || "This value must be different from {0}.", propertyToCompareName);
                     }
                 });
             }

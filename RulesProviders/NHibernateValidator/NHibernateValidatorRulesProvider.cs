@@ -62,9 +62,9 @@ namespace xVal.RulesProviders.NHibernateValidator
             if (att == null) throw new ArgumentNullException("att");
             string pattern;
             if (att.FractionalDigits < 1)
-                pattern = string.Format(@"\d{{,{0}}}", att.IntegerDigits);
+                pattern = string.Format(@"\d{{0,{0}}}", att.IntegerDigits);
             else
-                pattern = string.Format(@"\d{{,{0}}}\.\d{{,{1}}}", att.IntegerDigits, att.FractionalDigits);
+                pattern = string.Format(@"\d{{0,{0}}}(\.\d{{1,{1}}})?", att.IntegerDigits, att.FractionalDigits);
             return new RegularExpressionRule(pattern);
         }
 

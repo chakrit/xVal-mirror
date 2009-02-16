@@ -33,6 +33,7 @@ namespace xVal.Tests.RuleProviders
             var lengthRule = rules["Name"].First() as StringLengthRule;
             Assert.Equal(3, lengthRule.MinLength);
             Assert.Equal(6, lengthRule.MaxLength);
+            Assert.Equal("MyMessage", lengthRule.ErrorMessage);
         }
 
         [Fact]
@@ -107,19 +108,19 @@ namespace xVal.Tests.RuleProviders
         public void Converts_DigitsAttribute_IntegralOnly_To_RegEx()
         {
             var rule = TestConversion<DigitsAttribute, RegularExpressionRule>(4);
-            Assert.Equal(@"\d{,4}", rule.Pattern);
+            Assert.Equal(@"\d{0,4}", rule.Pattern);
         }
 
         [Fact]
         public void Converts_DigitsAttribute_WithFractional_To_RegEx()
         {
             var rule = TestConversion<DigitsAttribute, RegularExpressionRule>(4, 6);
-            Assert.Equal(@"\d{,4}\.\d{,6}", rule.Pattern);
+            Assert.Equal(@"\d{0,4}(\.\d{1,6})?", rule.Pattern);
         }
 
         private class TestModel
         {
-            [Length(3, 6)]
+            [Length(3, 6, Message = "MyMessage")]
             public string Name { get; set; }
         }
 

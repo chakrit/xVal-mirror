@@ -1,4 +1,16 @@
-﻿var xVal = xVal || {};
+﻿/* If you want default messages in English, you don't need to reference this file, because the messages are 
+ * in English by default anyway. This file exists only for reference during translation.
+ *
+ * To get default messages in any other language (or a different dialect of English):
+ *  (1) Make a copy of this file and call it anything else, for example: xVal.Messages.fr-FR.js
+ *  (2) Edit your copy to specify messages in your chosen language
+ *  (3) Reference your file in your project using a <script> tag.
+ * Simply referencing your custom file will override the default messages with your messages.
+ *
+ * Note that at present this only works when using jQuery Validation (not ASP.NET native) but
+ * I will add localisation support in ASP.NET native validation shortly.
+*/
+var xVal = xVal || {};
 xVal.Messages = {
     "Required" : "This value is required.",
     "DataType_EmailAddress" : "Please enter a valid email address.",

@@ -221,7 +221,7 @@ xVal.AttachValidator = function(elementPrefix, rulesConfig, pluginName) {
                     if (isNaN(Date.parse(elem.value)))
                         return xVal.Messages.DataType_Date || "Please enter a valid date in yyyy/mm/dd format.";
                     var formatDate = function(date) {
-                        var result = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDay();
+                        var result = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
                         if (date.getHours() + date.getMinutes() + date.getSeconds() != 0)
                             result += " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
                         return result.replace(/\b(\d)\b/g, '0$1');

@@ -38,8 +38,9 @@ namespace xVal.RuleProviders
         {
             // System.ComponentModel.DataAnnotations doesn't have any attribute to represent "int" or "double",
             // so we'll infer it directly from the property type
-            if (Array.IndexOf(NumericTypes, UnwrapIfNullable(propertyDescriptor.PropertyType)) >= 0) {
-                if (propertyDescriptor.PropertyType == typeof(int))
+            Type unwrappedType = UnwrapIfNullable(propertyDescriptor.PropertyType);
+            if (Array.IndexOf(NumericTypes, unwrappedType) >= 0) {
+                if (unwrappedType == typeof(int))
                     yield return new DataTypeRule(DataTypeRule.DataType.Integer);
                 else
                     yield return new DataTypeRule(DataTypeRule.DataType.Decimal);

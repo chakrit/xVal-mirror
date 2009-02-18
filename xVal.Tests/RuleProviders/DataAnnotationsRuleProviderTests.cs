@@ -268,7 +268,7 @@ namespace xVal.Tests.RuleProviders
 
         private class ModelWithValueTypeProperties
         {
-            public int IntProperty { get; set; }
+            public int? IntProperty { get; set; }
             public double DoubleProperty { get; set; }
             public float? FloatProperty { get; set; }
             public decimal DecimalProperty { get; set; }

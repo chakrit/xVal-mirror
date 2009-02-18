@@ -28,45 +28,45 @@ namespace xVal.ClientSidePlugins.Plugins.jQuery.Validate.Tests
         [Fact]
         public void DataType_EmailAddress_Enforced()
         {
-            TestFieldValidation("myprefix.DataType_EmailAddress_Field", "blah", "blah@domain.com", "Please enter a valid email address.");
+            TestFieldValidation("myprefix.DataType_EmailAddress_Field", "blah", "blah@domain.com", "DATATYPE_EMAIL");
         }
 
         [Fact]
         public void DataType_CreditCardLuhn_Enforced()
         {
-            TestFieldValidation("myprefix.DataType_CreditCardLuhn_Field", "4111 11111111 1112", "4111-1111 11111111", "Please enter a valid credit card number.");
+            TestFieldValidation("myprefix.DataType_CreditCardLuhn_Field", "4111 11111111 1112", "4111-1111 11111111", "DATATYPE_CREDITCARDLUHN");
         }
 
         [Fact]
         public void DataType_Integer_Enforced()
         {
-            TestFieldValidation("myprefix.DataType_Integer_Field", "32x", "-137", "Please enter a whole number.");
+            TestFieldValidation("myprefix.DataType_Integer_Field", "32x", "-137", "DATATYPE_INTEGER");
         }
 
         [Fact]
         public void DataType_Decimal_Enforced()
         {
-            TestFieldValidation("myprefix.DataType_Decimal_Field", "-32x3", "-323", "Please enter a valid number.");
-            TestFieldValidation("myprefix.DataType_Decimal_Field", "32x3.442", "323.442", "Please enter a valid number.");
+            TestFieldValidation("myprefix.DataType_Decimal_Field", "-32x3", "-323", "DATATYPE_DECIMAL");
+            TestFieldValidation("myprefix.DataType_Decimal_Field", "32x3.442", "323.442", "DATATYPE_DECIMAL");
         }
 
         [Fact]
         public void DataType_Date_Enforced() // Not too impressed with how jQuery Validate handles date formats. Will need to review this. For example, it accepts 05/09/2x and rejects 2008-09-05.
         {
-            TestFieldValidation("myprefix.DataType_Date_Field", "05/0x9/2008", "05/09/2008", "Please enter a valid date.");
+            TestFieldValidation("myprefix.DataType_Date_Field", "05/0x9/2008", "05/09/2008", "DATATYPE_DATE");
         }
 
         [Fact]
         public void DataType_DateTime_Enforced()
         {
-            TestFieldValidation("myprefix.DataType_DateTime_Field", "05/09/2008 3:4", "05/09/2008 3:44", "Please enter a valid date and time.");
+            TestFieldValidation("myprefix.DataType_DateTime_Field", "05/09/2008 3:4", "05/09/2008 3:44", "DATATYPE_DATETIME");
         }
 
         [Fact]
         public void DataType_Currency_Enforced()
         {
-            TestFieldValidation("myprefix.DataType_Currency_Field", "£4509101.", "4509101", "Please enter a currency value.");
-            TestFieldValidation("myprefix.DataType_Currency_Field", "4509101.381", "£ 4,509,101.38", "Please enter a currency value.");
+            TestFieldValidation("myprefix.DataType_Currency_Field", "£4509101.", "4509101", "DATATYPE_CURRENCY");
+            TestFieldValidation("myprefix.DataType_Currency_Field", "4509101.381", "£ 4,509,101.38", "DATATYPE_CURRENCY");
         }
 
         [Fact]
@@ -79,51 +79,51 @@ namespace xVal.ClientSidePlugins.Plugins.jQuery.Validate.Tests
         [Fact]
         public void Range_Int_Enforced()
         {
-            TestFieldValidation("myprefix.Range_Int_Field", "3", "6", "Please enter a value between 5 and 10.");
+            TestFieldValidation("myprefix.Range_Int_Field", "3", "6", "RANGE_NUMERIC_MINMAX:5,10");
         }
 
         [Fact]
         public void Range_Decimal_Enforced()
         {
-            TestFieldValidation("myprefix.Range_Decimal_Field", "10.99", "10.98", "Please enter a value less than or equal to 10.98.");
+            TestFieldValidation("myprefix.Range_Decimal_Field", "10.99", "10.98", "RANGE_NUMERIC_MAX:10.98");
         }
 
         [Fact]
         public void Range_String_Enforced()
         {
-            TestFieldValidation("myprefix.Range_String_Field", "aardvarj", "aardvarl", "Please enter a value alphabetically between 'aardvark' and 'antelope'.");
+            TestFieldValidation("myprefix.Range_String_Field", "aardvarj", "aardvarl", "RANGE_STRING_MINMAX:aardvark,antelope");
         }
 
         [Fact]
         public void Range_DateTime_Enforced()
         {
-            TestFieldValidation("myprefix.Range_DateTime_Field", "blah", "January 01, 2008", "Please enter a valid date in yyyy/mm/dd format.");
-            TestFieldValidation("myprefix.Range_DateTime_Field", "01/01/2000", "01/01/2002", "Please enter a date no earlier than 2001-02-01 17:04:59.");
+            TestFieldValidation("myprefix.Range_DateTime_Field", "blah", "January 01, 2008", "DATATYPE_DATE");
+            TestFieldValidation("myprefix.Range_DateTime_Field", "01/01/2000", "01/01/2002", "RANGE_DATETIME_MIN:2001-02-19 17:04:59");
         }
 
         [Fact]
         public void StringLength_Min_Enforced()
         {
-            TestFieldValidation("myprefix.StringLength_Min_Field", "ab", "abc", "Please enter at least 3 characters.");
+            TestFieldValidation("myprefix.StringLength_Min_Field", "ab", "abc", "STRINGLENGTH_MIN:3");
         }
 
         [Fact]
         public void StringLength_Max_Enforced()
         {
-            TestFieldValidation("myprefix.StringLength_Max_Field", "abcdefg", "abcdef", "Please enter no more than 6 characters.");
+            TestFieldValidation("myprefix.StringLength_Max_Field", "abcdefg", "abcdef", "STRINGLENGTH_MAX:6");
         }
 
         [Fact]
         public void StringLength_Range_Enforced()
         {
-            TestFieldValidation("myprefix.StringLength_Range_Field", "abc", "abcd", "Please enter a value between 4 and 7 characters long.");
-            TestFieldValidation("myprefix.StringLength_Range_Field", "abcdefgh", "abcdefg", "Please enter a value between 4 and 7 characters long.");
+            TestFieldValidation("myprefix.StringLength_Range_Field", "abc", "abcd", "STRINGLENGTH_MINMAX:4,7");
+            TestFieldValidation("myprefix.StringLength_Range_Field", "abcdefgh", "abcdefg", "STRINGLENGTH_MINMAX:4,7");
         }
 
         [Fact]
         public void Comparison_Equals_Enforced()
         {
-            TestFieldValidation("myprefix.Comparison_Equals", "bla", "blah", "This value must be the same as RequiredField.",
+            TestFieldValidation("myprefix.Comparison_Equals", "bla", "blah", "COMPARISON_EQUALS:RequiredField",
                 // Setup first: populate the RequiredField box first
                 browser => browser.Type("myprefix_RequiredField", "blah")
             );
@@ -132,7 +132,7 @@ namespace xVal.ClientSidePlugins.Plugins.jQuery.Validate.Tests
         [Fact]
         public void Comparison_DoesNotEqual_Enforced()
         {
-            TestFieldValidation("myprefix.Comparison_DoesNotEqual", "blah", "blah2", "This value must be different from RequiredField.",
+            TestFieldValidation("myprefix.Comparison_DoesNotEqual", "blah", "blah2", "COMPARISON_DOESNOTEQUAL:RequiredField",
                 // Setup first: populate the RequiredField box first
                 browser => browser.Type("myprefix_RequiredField", "blah")
             );

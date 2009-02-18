@@ -53,9 +53,18 @@ namespace xVal.RulesProviders.CastleValidator
         {
             var validators = registry.GetValidators(runner, type, RunWhen.Everytime);
             var allRules = from val in validators
-                           from rule in ruleEmitters.EmitRules(val)
+                           from rule in ConvertToXValRules(val)
                            select new KeyValuePair<string, RuleBase>(val.Property.Name, rule);
             return new RuleSet(allRules.ToLookup(x => x.Key, x => x.Value));
+        }
+
+        private IEnumerable<RuleBase> ConvertToXValRules(IValidator val)
+        {
+            var rules = ruleEmitters.EmitRules(val);
+            if (!string.IsNullOrEmpty(val.ErrorMessage))
+                foreach (var rule in rules)
+                    rule.ErrorMessage = val.ErrorMessage;
+            return rules;
         }
 
         private static StringLengthRule ConstructStringLengthRule(LengthValidator lengthValidator)

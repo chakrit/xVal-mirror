@@ -25,6 +25,13 @@ namespace xVal.Tests.RuleProviders
         }
 
         [Fact]
+        public void Obtains_Custom_Error_Message_From_Attribute()
+        {
+            var rule = TestConversion<ValidateNonEmptyAttribute, RequiredRule>("Custom Message");
+            Assert.Equal("Custom Message", rule.ErrorMessage);
+        }
+
+        [Fact]
         public void Converts_ValidateEmailAttribute_To_DataTypeRule_Email()
         {
             var rule = TestConversion<ValidateEmailAttribute, DataTypeRule>();

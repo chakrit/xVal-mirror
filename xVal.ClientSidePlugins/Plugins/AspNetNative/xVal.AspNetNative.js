@@ -79,34 +79,56 @@ xVal.Plugins["AspNetNative"] = {
             messageContainer[ruleConfig.params[i].name] = ruleConfig.params[i].value;
     },
 
+    _formatString: function(pattern, params) {
+        for (var i = 0; i < params.length; i++)
+            pattern = pattern.replace("{" + i + "}", params[i] || "");
+        return pattern;
+    },
+
+    _formatDate: function(date) {
+        // Todo: support variable date formats
+        var result = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+        if (date.getHours() + date.getMinutes() + date.getSeconds() != 0)
+            result += " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+        return result.replace(/\b(\d)\b/g, '0$1');
+    },
+
     _getAspNetRuleConfig: function(ruleName, ruleParams, fixedErrorText, elementPrefix) {
         switch (ruleName) {
             case "Required":
                 return {
                     evaluationFunction: "RequiredFieldValidatorEvaluateIsValid",
                     params: [{ name: "initialvalue", value: ""}],
-                    errorMessage: fixedErrorText || "Please enter a value."
+                    errorMessage: fixedErrorText || xVal.Messages.Required || "Please enter a value."
                 };
             case "Range":
                 var message;
                 var min = null, max = null;
+                var messageParams = [];
                 if (ruleParams.Type != "datetime") {
                     min = typeof (ruleParams.Min) == 'undefined' ? null : ruleParams.Min;
                     max = typeof (ruleParams.Max) == 'undefined' ? null : ruleParams.Max;
+                    if (min != null) messageParams.push(min);
+                    if (max != null) messageParams.push(max);
                 } else {
                     if (typeof (ruleParams.MinYear) != 'undefined')
                         min = new Date(ruleParams.MinYear, ruleParams.MinMonth - 1, ruleParams.MinDay, ruleParams.MinHour, ruleParams.MinMinute, ruleParams.MinSecond);
                     if (typeof (ruleParams.MaxYear) != 'undefined')
                         max = new Date(ruleParams.MaxYear, ruleParams.MaxMonth - 1, ruleParams.MaxDay, ruleParams.MaxHour, ruleParams.MaxMinute, ruleParams.MaxSecond);
+                    if (min != null) messageParams.push(this._formatDate(min));
+                    if (max != null) messageParams.push(this._formatDate(max));
                 }
-                if (min != null) {
-                    if (max != null)
-                        message = "Please enter a value between " + min + " and " + max + ".";
-                    else
-                        message = "Please enter a value of at least " + min + ".";
-                }
-                else
-                    message = "Please enter a value no more than " + max + ".";
+                // There are 9 possible default messages depending on data type and which params were specified. 
+                // Pick the right one, choosing a suitable fallback message if no defaults are available
+                var defaultMessageSet = (ruleParams.Type == "datetime") ? [xVal.Messages.Range_DateTime_Min, xVal.Messages.Range_DateTime_Max, xVal.Messages.Range_DateTime_MinMax]
+                                      : (ruleParams.Type == "string") ? [xVal.Messages.Range_String_Min, xVal.Messages.Range_String_Max, xVal.Messages.Range_String_MinMax]
+                                      : [xVal.Messages.Range_Numeric_Min, xVal.Messages.Range_Numeric_Max, xVal.Messages.Range_Numeric_MinMax];
+                defaultMessageSet[0] = defaultMessageSet[0] || "Please enter a value of at least {0}.";
+                defaultMessageSet[1] = defaultMessageSet[1] || "Please enter a value no more than {0}.";
+                defaultMessageSet[2] = defaultMessageSet[2] || "Please enter a value between {0} and {1}.";
+                message = (min != null) ? ((max != null) ? defaultMessageSet[2]
+                                                         : defaultMessageSet[1])
+                                        : defaultMessageSet[1];
 
                 var aspNetNativeType = ruleParams.Type == "string" ? "String" :
                                        ruleParams.Type == "integer" ? "Integer" :
@@ -122,34 +144,37 @@ xVal.Plugins["AspNetNative"] = {
                              { name: "type", value: aspNetNativeType },
                              { name: "minimumvalue", value: min },
                              { name: "maximumvalue", value: max}],
-                    errorMessage: fixedErrorText || message
+                    errorMessage: this._formatString(fixedErrorText || message, messageParams)
                 };
             case "RegEx":
                 return {
                     evaluationFunction: "xVal_AspNetNative_RegEx",
                     params: [{ name: "pattern", value: ruleParams.Pattern },
                              { name: "options", value: typeof (ruleParams.Options) == 'undefined' ? "" : ruleParams.Options}],
-                    errorMessage: fixedErrorText || "Please enter a valid value."
+                    errorMessage: fixedErrorText || xVal.Messages.Regex || "Please enter a valid value."
                 };
             case "StringLength":
                 var min = typeof (ruleParams.MinLength) == 'undefined' ? null : ruleParams.MinLength;
                 var max = typeof (ruleParams.MaxLength) == 'undefined' ? null : ruleParams.MaxLength;
+                var messageParams = [];
+                if (min != null) messageParams.push(min);
+                if (max != null) messageParams.push(max);
                 var pattern = "^.{" + (min || "0") + "," + (max || "") + "}$";
                 var message;
                 if (min != null) {
                     if (max != null)
-                        message = "Please enter a value between " + min + " and " + max + " characters long.";
+                        message = xVal.Messages.StringLength_MinMax || "Please enter a value between {0} and {1} characters long.";
                     else
-                        message = "Please enter a value at least " + min + " characters long.";
+                        message = xVal.Messages.StringLength_Min || "Please enter a value at least {0} characters long.";
                 }
                 else
-                    message = "Please enter a value no more than " + max + " characters long.";
+                    message = xVal.Messages.StringLength_Max || "Please enter a value no more than {0} characters long.";
 
                 return {
                     evaluationFunction: "xVal_AspNetNative_RegEx",
                     params: [{ name: "pattern", value: pattern },
                              { name: "options", value: ""}],
-                    errorMessage: fixedErrorText || message
+                    errorMessage: this._formatString(fixedErrorText || message, messageParams)
                 };
 
             case "DataType":
@@ -157,7 +182,7 @@ xVal.Plugins["AspNetNative"] = {
                     return {
                         evaluationFunction: "xVal_AspNetNative_CreditCardLuhn",
                         params: [],
-                        errorMessage: fixedErrorText || "Please enter a valid credit card number."
+                        errorMessage: fixedErrorText || xVal.Messages.DataType_CreditCardLuhn || "Please enter a valid credit card number."
                     };
                 }
 
@@ -165,27 +190,27 @@ xVal.Plugins["AspNetNative"] = {
                 switch (ruleParams.Type) {
                     case "EmailAddress":
                         pattern = "^[\\w\\.=-]+@[\\w\\.-]+\\.[\\w]{2,}$";
-                        message = "Please enter a valid email address.";
+                        message = xVal.Messages.DataType_EmailAddress || "Please enter a valid email address.";
                         break;
                     case "Integer":
                         pattern = "^\\-?\\d+$";
-                        message = "Please enter a number.";
+                        message = xVal.Messages.DataType_Integer || "Please enter a number.";
                         break;
                     case "Decimal":
                         pattern = "^\\-?\\d+(\\.\\d+)?$";
-                        message = "Please enter a decimal number.";
+                        message = xVal.Messages.DataType_Decimal || "Please enter a decimal number.";
                         break;
                     case "Date":
                         pattern = "^(\\d{1,2}[/\\-\\.\\s]\\d{1,2}[/\\-\\.\\s](\\d{2}|\\d{4}))|((\\d{2}|\\d{4})[/\\-\\.\\s]\\d{1,2}[/\\-\\.\\s]\\d{1,2})$";
-                        message = "Please enter a valid date.";
+                        message = xVal.Messages.DataType_Date || "Please enter a valid date.";
                         break;
                     case "DateTime":
                         pattern = "^(\\d{1,2}[/\\-\\.\\s]\\d{1,2}[/\\-\\.\\s](\\d{2}|\\d{4}))|((\\d{2}|\\d{4})[/\\-\\.\\s]\\d{1,2}[/\\-\\.\\s]\\d{1,2})\\s+\\d{1,2}\\:\\d{2}(\\:\\d{2})?$";
-                        message = "Please enter a valid date and time.";
+                        message = xVal.Messages.DataType_DateTime || "Please enter a valid date and time.";
                         break;
                     case "Currency":
                         pattern = "^\\-?\\D?\\s?\\-?\\s?([0-9]{1,3},([0-9]{3},)*[0-9]{3}|[0-9]+)(.[0-9][0-9])?$";
-                        message = "Please enter a currency value.";
+                        message = xVal.Messages.DataType_Currency || "Please enter a currency value.";
                         break;
                 }
                 return {
@@ -199,25 +224,25 @@ xVal.Plugins["AspNetNative"] = {
                 var elemToCompareId = this._makeAspNetMvcHtmlHelperID((elementPrefix ? elementPrefix + "." : "") + ruleParams.PropertyToCompare);
                 if (document.getElementById(elemToCompareId) == null)
                     return;
-                    
+
                 // See if there is an AspNetNative equivalent of the requested operator
-                var operator =   ruleParams.ComparisonOperator == "Equals" ? "Equal"
+                var operator = ruleParams.ComparisonOperator == "Equals" ? "Equal"
                                : ruleParams.ComparisonOperator == "DoesNotEqual" ? "NotEqual"
                                : null;
                 if (operator == null)
                     return;
 
-                var message = fixedErrorText;
-                if ((message == null) && (ruleParams.ComparisonOperator == "Equals"))
-                    message = "This value must be the same as " + ruleParams.PropertyToCompare + ".";
-                if ((message == null) && (ruleParams.ComparisonOperator == "DoesNotEqual"))
-                    message = "This value must be different from " + ruleParams.PropertyToCompare + ".";
+                var message;
+                if (ruleParams.ComparisonOperator == "Equals")
+                    message = xVal.Messages.Comparison_Equals || "This value must be the same as {0}.";
+                if (ruleParams.ComparisonOperator == "DoesNotEqual")
+                    message = xVal.Messages.Comparison_DoesNotEqual || "This value must be different from {1}.";
 
                 return {
                     evaluationFunction: "CompareValidatorEvaluateIsValid",
                     params: [{ name: "controltocompare", value: elemToCompareId },
                              { name: "operator", value: operator}],
-                    errorMessage: message
+                    errorMessage: this._formatString(fixedErrorText || message, [ruleParams.PropertyToCompare])
                 };
         }
         return null;

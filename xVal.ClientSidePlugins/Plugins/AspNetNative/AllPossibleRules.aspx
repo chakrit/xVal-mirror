@@ -6,6 +6,7 @@
     <script type="text/javascript" src="<%= ClientScript.GetWebResourceUrl(typeof(System.Web.UI.Page), "WebForms.js") %>"></script>
     <script type="text/javascript" src="<%= ClientScript.GetWebResourceUrl(typeof(System.Web.UI.Page), "WebUIValidation.js") %>"></script>
     <script type="text/javascript" src="<%= ResolveUrl("~/Plugins/AspNetNative/xVal.AspNetNative.js") %>"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/Messages/xVal.Messages.ForUnitTests.js") %>"></script>
 </head>
 <body>
     <% using(Html.BeginForm()) { %>

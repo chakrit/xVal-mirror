@@ -20,7 +20,7 @@ xVal.Messages = {
     "Range_String_Max": "RANGE_STRING_MAX:{0}",
     "Range_String_MinMax": "RANGE_STRING_MINMAX:{0},{1}",
     "Range_DateTime_Min": "RANGE_DATETIME_MIN:{0}",
-    "Range_DateTime_Max": "RANGE_DATETIME_MAX:{1}",
+    "Range_DateTime_Max": "RANGE_DATETIME_MAX:{0}",
     "Range_DateTime_MinMax": "RANGE_DATETIME_MINMAX:{0},{1}",
     "StringLength_Min": "STRINGLENGTH_MIN:{0}",
     "StringLength_Max": "STRINGLENGTH_MAX:{0}",

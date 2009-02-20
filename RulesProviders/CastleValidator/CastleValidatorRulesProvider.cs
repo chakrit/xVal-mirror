@@ -74,8 +74,8 @@ namespace xVal.RulesProviders.CastleValidator
             else if((lengthValidator.MinLength != int.MaxValue) || (lengthValidator.MaxLength != int.MaxValue)) {
                 return new StringLengthRule(
                     /* Min length */ lengthValidator.MinLength == int.MinValue ? (int?)null : lengthValidator.MinLength,
-                                     /* Min length */ lengthValidator.MaxLength == int.MaxValue ? (int?)null : lengthValidator.MaxLength
-                    );
+                    /* Max length */ lengthValidator.MaxLength == int.MaxValue ? (int?)null : lengthValidator.MaxLength
+                );
             }
             return null;
         }

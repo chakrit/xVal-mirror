@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HtmlHelpers\JsonValidationConfigFormatterTests.cs" />
+    <Compile Include="HtmlHelpers\ValidationInfoTests.cs" />
     <Compile Include="HtmlHelpers\XmlValidationConfigFormatterTests.cs" />
     <Compile Include="RuleProviders\CachingRulesProviderTests.cs" />
     <Compile Include="RuleProviders\CastleValidatorRulesProviderTests.cs" />

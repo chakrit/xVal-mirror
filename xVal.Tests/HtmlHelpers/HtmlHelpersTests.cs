@@ -27,13 +27,13 @@ namespace xVal.Tests.HtmlHelpers
             var mockFormatter = new Moq.Mock<IValidationConfigFormatter>(MockBehavior.Strict);
             mockFormatter.Expect(x => x.FormatRules(It.IsAny<RuleSet>()))
                 .Returns("ok");
-            ValidationHelpers.Formatter = mockFormatter.Object;
+            ValidationInfo.Formatter = mockFormatter.Object;
 
             // Act
             var result = html.ClientSideValidationRules(arbitraryType);
 
             // Assert
-            Assert.Equal("ok", result);
+            Assert.Equal("ok", result.ToString());
         }
 
         [Fact]
@@ -58,13 +58,13 @@ namespace xVal.Tests.HtmlHelpers
             mockFormatter.Expect(x => x.FormatRules(It.IsAny<RuleSet>()))
                 .Callback(callback)
                 .Returns("ok");
-            ValidationHelpers.Formatter = mockFormatter.Object;
+            ValidationInfo.Formatter = mockFormatter.Object;
 
             // Act
             var result = html.ClientSideValidationRules(arbitraryType);
 
             // Assert
-            Assert.Equal("ok", result);
+            Assert.Equal("ok", result.ToString());
             Assert.Equal(1, passedRules.Keys.Count());
             Assert.Same(rules["someProperty"].Single(), passedRules["someProperty"].First());
         }
@@ -80,13 +80,13 @@ namespace xVal.Tests.HtmlHelpers
             var mockFormatter = new Moq.Mock<IValidationConfigFormatter>(MockBehavior.Strict);
             mockFormatter.Expect(x => x.FormatRules(rules)).Returns("ok");
 
-            ValidationHelpers.Formatter = mockFormatter.Object;
+            ValidationInfo.Formatter = mockFormatter.Object;
 
             // Act
             var result = html.ClientSideValidationRules(rules);
 
             // Assert
-            Assert.Equal("ok", result);
+            Assert.Equal("ok", result.ToString());
         }
 
         [Fact]
@@ -106,13 +106,13 @@ namespace xVal.Tests.HtmlHelpers
             var mockFormatter = new Moq.Mock<IValidationConfigFormatter>(MockBehavior.Strict);
             mockFormatter.Expect(x => x.FormatRules(rules)).Returns("{rulesWouldGoHere}");
 
-            ValidationHelpers.Formatter = mockFormatter.Object;
+            ValidationInfo.Formatter = mockFormatter.Object;
 
             // Act
             var result = html.ClientSideValidation("my.prefix", rules);
 
             // Assert
-            Assert.Equal(@"<script type=""text/javascript"">xVal.AttachValidator(""my.prefix"", {rulesWouldGoHere})</script>", result);
+            Assert.Equal(@"<script type=""text/javascript"">xVal.AttachValidator(""my.prefix"", {rulesWouldGoHere})</script>", result.ToString());
         }
     }
 }

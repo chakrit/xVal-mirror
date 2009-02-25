@@ -23,7 +23,7 @@ var Page_ValidationActive;
 
 xVal.Plugins["AspNetNative"] = {
     AttachValidator: function(elementPrefix, rulesConfig) {
-        Page_Validators = new Array();
+        Page_Validators = Page_Validators || new Array();
 
         for (var i = 0; i < rulesConfig.Fields.length; i++) {
             var fieldName = rulesConfig.Fields[i].FieldName;

@@ -4,7 +4,7 @@ using xVal.Rules;
 
 namespace xVal.Tests.Rules
 {
-    public class RuleBaseTests
+    public class RuleTests
     {
         [Fact]
         public void Can_Set_ErrorMessage()
@@ -79,7 +79,7 @@ namespace xVal.Tests.Rules
             Assert.Equal("This is a resource string", rule.ErrorMessageOrResourceString);
         }
 
-        private class TestRule : RuleBase
+        private class TestRule : Rule
         {
             public TestRule() : base("Test rule")
             {

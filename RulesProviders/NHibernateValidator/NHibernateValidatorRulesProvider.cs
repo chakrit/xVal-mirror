@@ -47,7 +47,7 @@ namespace xVal.RulesProviders.NHibernateValidator
             return new RuleSet(rules.ToLookup(x => x.MemberName, x => x.Rule));
         }
 
-        private IEnumerable<RuleBase> ConvertToXValRules(IRuleArgs att)
+        private IEnumerable<Rule> ConvertToXValRules(IRuleArgs att)
         {
             foreach (var rule in ruleEmitters.EmitRules(att)) {
                 if(rule != null) {

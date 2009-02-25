@@ -14,7 +14,7 @@ namespace xVal.Html
         static readonly JavaScriptSerializer Serializer = new JavaScriptSerializer();
         static JsonValidationConfigFormatter()
         {
-            Serializer.RegisterConverters(new JavaScriptConverter[] { new RuleSetConverter(), new RuleBaseConverter() });
+            Serializer.RegisterConverters(new JavaScriptConverter[] { new RuleSetConverter(), new RuleConverter() });
         }
 
         public string FormatRules(RuleSet rules)
@@ -22,7 +22,7 @@ namespace xVal.Html
             return Serializer.Serialize(rules);
         }
 
-        private class RuleBaseConverter : JavaScriptConverter
+        private class RuleConverter : JavaScriptConverter
         {
             public override object Deserialize(IDictionary<string, object> dictionary, Type type, JavaScriptSerializer serializer)
             {
@@ -31,15 +31,15 @@ namespace xVal.Html
 
             public override IDictionary<string, object> Serialize(object obj, JavaScriptSerializer serializer)
             {
-                var ruleBase = obj as RuleBase;
-                if (ruleBase == null)
+                var rule = obj as Rule;
+                if (rule == null)
                     throw new ArgumentException("obj must be of type RouteBase");
 
                 var result = new Dictionary<string, object> {
-                    { "RuleName", ruleBase.RuleName },
-                    { "RuleParameters", ruleBase.ListParameters() }
+                    { "RuleName", rule.RuleName },
+                    { "RuleParameters", rule.ListParameters() }
                 };
-                var errorMessage = ruleBase.ErrorMessageOrResourceString;
+                var errorMessage = rule.ErrorMessageOrResourceString;
                 if(errorMessage != null)
                     result.Add("Message", errorMessage);
                 return result;
@@ -47,7 +47,7 @@ namespace xVal.Html
 
             public override IEnumerable<Type> SupportedTypes
             {
-                get { return new[] { typeof(RuleBase) }; }
+                get { return new[] { typeof(Rule) }; }
             }
         }
 

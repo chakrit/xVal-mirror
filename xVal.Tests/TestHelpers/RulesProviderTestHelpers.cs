@@ -14,7 +14,7 @@ namespace xVal.Tests.TestHelpers
     {
         public static TRule TestConversion<TAttribute, TRule>(IRulesProvider ruleProvider, params object[] attributeConstructorParams)
             where TAttribute : Attribute
-            where TRule : RuleBase
+            where TRule : Rule
         {
             var propertyRules = TestConversionToMultipleRules<TAttribute, TRule>(ruleProvider, attributeConstructorParams);
             Assert.Equal(1, propertyRules.Count());
@@ -23,7 +23,7 @@ namespace xVal.Tests.TestHelpers
 
         public static IEnumerable<TRule> TestConversionToMultipleRules<TAttribute, TRule>(IRulesProvider ruleProvider, params object[] attributeConstructorParams)
             where TAttribute : Attribute
-            where TRule : RuleBase
+            where TRule : Rule
         {
             // Arrange
             Type testType = EmitTestType(typeof(TAttribute), attributeConstructorParams);

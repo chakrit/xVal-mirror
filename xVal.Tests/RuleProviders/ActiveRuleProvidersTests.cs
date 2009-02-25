@@ -60,7 +60,7 @@ namespace xVal.Tests.RuleProviders
 
         private static IRulesProvider MakeMockRuleProvider(Type forModelType, params string[] rulePropertyNames)
         {
-            var ruleset = new RuleSet(rulePropertyNames.ToLookup(x => x, x => (RuleBase)new RequiredRule()));
+            var ruleset = new RuleSet(rulePropertyNames.ToLookup(x => x, x => (Rule)new RequiredRule()));
             var mockProvider = new Moq.Mock<IRulesProvider>();
             mockProvider.Expect(x => x.GetRulesFromType(forModelType)).Returns(ruleset);
             return mockProvider.Object;

@@ -15,11 +15,11 @@ namespace xVal.Tests.TestHelpers
         {
             var rules = from propName in data.Keys
                         from ruleName in data[propName].Keys
-                        select new { propName, rule = (RuleBase)new TestRule(ruleName, data[propName][ruleName]) };
+                        select new { propName, rule = (Rule)new TestRule(ruleName, data[propName][ruleName]) };
             return new RuleSet(rules.ToLookup(x => x.propName, x => x.rule));
         }
 
-        private class TestRule : RuleBase
+        private class TestRule : Rule
         {
             public IDictionary<string, string> Parameters { get; set; }
 

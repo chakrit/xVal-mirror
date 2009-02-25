@@ -2,7 +2,7 @@ using System;
 
 namespace xVal.Rules
 {
-    public class StringLengthRule : RuleBase
+    public class StringLengthRule : Rule
     {
         public int? MinLength { get; private set; }
         public int? MaxLength { get; private set; }

@@ -14,8 +14,8 @@ namespace xVal.Tests.RuleProviders
         public void Returns_Rules_Given_By_Subclass()
         {
             // Arrange
-            var expectedStringResult = new RuleSet(new RuleBase[] {}.ToLookup(x => "test1", x => x));
-            var expectedDateTimeResult = new RuleSet(new RuleBase[] {}.ToLookup(x => "test2", x => x));
+            var expectedStringResult = new RuleSet(new Rule[] {}.ToLookup(x => "test1", x => x));
+            var expectedDateTimeResult = new RuleSet(new Rule[] {}.ToLookup(x => "test2", x => x));
             var provider = new TestRulesProvider(t => {
                 if(t == typeof(string))
                     return expectedStringResult;
@@ -38,8 +38,8 @@ namespace xVal.Tests.RuleProviders
         {
             // Arrange
             int numCalls = 0;
-            var expectedStringResult = new RuleSet(new RuleBase[] { }.ToLookup(x => "test1", x => x));
-            var expectedDateTimeResult = new RuleSet(new RuleBase[] { }.ToLookup(x => "test2", x => x));
+            var expectedStringResult = new RuleSet(new Rule[] { }.ToLookup(x => "test1", x => x));
+            var expectedDateTimeResult = new RuleSet(new Rule[] { }.ToLookup(x => "test2", x => x));
             var provider = new TestRulesProvider(t =>
             {
                 numCalls++;

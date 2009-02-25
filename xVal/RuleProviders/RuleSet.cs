@@ -8,11 +8,11 @@ namespace xVal.RuleProviders
 {
     public class RuleSet
     {
-        public static readonly RuleSet Empty = new RuleSet(new object[] { }.ToLookup(x => (string) null, x => (RuleBase) null));
+        public static readonly RuleSet Empty = new RuleSet(new object[] { }.ToLookup(x => (string) null, x => (Rule) null));
 
-        private readonly ILookup<string, RuleBase> rules;
+        private readonly ILookup<string, Rule> rules;
 
-        public RuleSet(ILookup<string, RuleBase> rules)
+        public RuleSet(ILookup<string, Rule> rules)
         {
             if (rules == null) throw new ArgumentNullException("rules");
             this.rules = rules;
@@ -33,7 +33,7 @@ namespace xVal.RuleProviders
             return rules.Contains(key);
         }
 
-        public IEnumerable<RuleBase> this[string key]
+        public IEnumerable<Rule> this[string key]
         {
             get { return rules[key]; }
         }

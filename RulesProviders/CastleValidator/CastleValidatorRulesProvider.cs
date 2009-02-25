@@ -20,21 +20,21 @@ namespace xVal.RulesProviders.CastleValidator
             runner = new ValidatorRunner(registry);
             ruleEmitters.AddSingle<NonEmptyValidator>(x => new RequiredRule());
             ruleEmitters.AddSingle<CreditCardValidator>(x => new DataTypeRule(DataTypeRule.DataType.CreditCardLuhn));
-            ruleEmitters.AddMultiple<DateTimeValidator>(x => new RuleBase[] {
+            ruleEmitters.AddMultiple<DateTimeValidator>(x => new Rule[] {
                 new RequiredRule(),
                 new DataTypeRule(DataTypeRule.DataType.DateTime)
             });
-            ruleEmitters.AddMultiple<DateValidator>(x => new RuleBase[] {
+            ruleEmitters.AddMultiple<DateValidator>(x => new Rule[] {
                 new RequiredRule(),
                 new DataTypeRule(DataTypeRule.DataType.Date)
             });
-            ruleEmitters.AddMultiple<IntegerValidator>(x => new RuleBase[] {
+            ruleEmitters.AddMultiple<IntegerValidator>(x => new Rule[] {
                 new RequiredRule(),
                 new DataTypeRule(DataTypeRule.DataType.Integer)
             });
             ruleEmitters.AddMultiple<IValidator>(x => {
                 if ((x is DecimalValidator) || (x is DoubleValidator) || (x is SingleValidator)) {
-                    return new RuleBase[] {
+                    return new Rule[] {
                         new RequiredRule(),
                         new DataTypeRule(DataTypeRule.DataType.Decimal)
                     };
@@ -54,11 +54,11 @@ namespace xVal.RulesProviders.CastleValidator
             var validators = registry.GetValidators(runner, type, RunWhen.Everytime);
             var allRules = from val in validators
                            from rule in ConvertToXValRules(val)
-                           select new KeyValuePair<string, RuleBase>(val.Property.Name, rule);
+                           select new KeyValuePair<string, Rule>(val.Property.Name, rule);
             return new RuleSet(allRules.ToLookup(x => x.Key, x => x.Value));
         }
 
-        private IEnumerable<RuleBase> ConvertToXValRules(IValidator val)
+        private IEnumerable<Rule> ConvertToXValRules(IValidator val)
         {
             var rules = ruleEmitters.EmitRules(val);
             if (!string.IsNullOrEmpty(val.ErrorMessage))

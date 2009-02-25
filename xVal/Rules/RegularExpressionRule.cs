@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace xVal.Rules
 {
-    public class RegularExpressionRule : RuleBase
+    public class RegularExpressionRule : Rule
     {
         // Todo: check these regexes and add tests for them (especially Regex_Duration - how is one supposed to format a duration?)
         public const string Regex_Time = @"((([0]?[1-9]|1[0-2])(:|\.)[0-5][0-9]((:|\.)[0-5][0-9])?( )?(am|pm))|(([0]?[0-9]|1[0-9]|2[0-3])(:|\.)[0-5][0-9]((:|\.)[0-5][0-9])?))";

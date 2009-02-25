@@ -8,15 +8,15 @@ namespace xVal.RuleProviders
     // Note: RuleEmitters should return null if they don't want to match the input
     public class RuleEmitterList<TInputBase>
     {
-        public delegate IEnumerable<RuleBase> RuleEmitter(TInputBase item);
+        public delegate IEnumerable<Rule> RuleEmitter(TInputBase item);
 
         private readonly List<RuleEmitter> ruleEmitters = new List<RuleEmitter>();
 
-        public void AddSingle<TSource>(Func<TSource, RuleBase> emitter) where TSource : TInputBase
+        public void AddSingle<TSource>(Func<TSource, Rule> emitter) where TSource : TInputBase
         {
             ruleEmitters.Add(x => {
                 if (x is TSource) {
-                    RuleBase rule = emitter((TSource)x);
+                    Rule rule = emitter((TSource)x);
                     return rule == null ? null : new[] {rule};
                 } else {
                     return null;
@@ -29,14 +29,14 @@ namespace xVal.RuleProviders
             ruleEmitters.Add(x => (x is TSource) ? emitter((TSource)x) : null);
         }
 
-        public IEnumerable<RuleBase> EmitRules(TInputBase item)
+        public IEnumerable<Rule> EmitRules(TInputBase item)
         {
             foreach (var converter in ruleEmitters) {
                 var converterResult = converter(item);
                 if (converterResult != null)
                     return converterResult;
             }
-            return new RuleBase[] {}; // No matching converter, so return empty set of rules
+            return new Rule[] {}; // No matching converter, so return empty set of rules
         }
     }
 }

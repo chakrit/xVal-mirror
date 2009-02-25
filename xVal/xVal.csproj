@@ -71,7 +71,7 @@
     <Compile Include="Rules\RangeRule.cs" />
     <Compile Include="Rules\RegularExpressionRule.cs" />
     <Compile Include="Rules\RequiredRule.cs" />
-    <Compile Include="Rules\RuleBase.cs" />
+    <Compile Include="Rules\Rule.cs" />
     <Compile Include="Rules\StringLengthRule.cs" />
     <Compile Include="ServerSide\ErrorInfo.cs" />
     <Compile Include="ServerSide\RulesException.cs" />

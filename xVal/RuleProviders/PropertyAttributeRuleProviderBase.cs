@@ -23,11 +23,11 @@ namespace xVal.RuleProviders
             var typeDescriptor = metadataProviderFactory(type).GetTypeDescriptor(type);
             var rules = (from prop in typeDescriptor.GetProperties().Cast<PropertyDescriptor>()
                          from rule in GetRulesFromProperty(prop)
-                         select new KeyValuePair<string, RuleBase>(prop.Name, rule));
+                         select new KeyValuePair<string, Rule>(prop.Name, rule));
             return new RuleSet(rules.ToLookup(x => x.Key, x => x.Value));
         }
 
-        protected virtual IEnumerable<RuleBase> GetRulesFromProperty(PropertyDescriptor propertyDescriptor)
+        protected virtual IEnumerable<Rule> GetRulesFromProperty(PropertyDescriptor propertyDescriptor)
         {
             return from att in propertyDescriptor.Attributes.OfType<TAttribute>()
                    from validationRule in MakeValidationRulesFromAttribute(att)
@@ -35,6 +35,6 @@ namespace xVal.RuleProviders
                    select validationRule;
         }
 
-        protected abstract IEnumerable<RuleBase> MakeValidationRulesFromAttribute(TAttribute att);
+        protected abstract IEnumerable<Rule> MakeValidationRulesFromAttribute(TAttribute att);
     }
 }

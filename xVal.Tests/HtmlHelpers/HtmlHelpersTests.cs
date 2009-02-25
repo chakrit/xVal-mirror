@@ -43,7 +43,7 @@ namespace xVal.Tests.HtmlHelpers
             var html = new HtmlHelperMocks<object>().HtmlHelper;
             var arbitraryType = typeof (DateTime);
             var ruleProvider = new Moq.Mock<IRulesProvider>();
-            var rules = new RuleSet(new[] { "someProperty" }.ToLookup(x => x, x => (RuleBase)new RequiredRule()));
+            var rules = new RuleSet(new[] { "someProperty" }.ToLookup(x => x, x => (Rule)new RequiredRule()));
             ruleProvider.Expect(x => x.GetRulesFromType(arbitraryType)).Returns(rules);
             ActiveRuleProviders.Providers.Clear();
             ActiveRuleProviders.Providers.Add(ruleProvider.Object);
@@ -74,7 +74,7 @@ namespace xVal.Tests.HtmlHelpers
         {
             // Arrange
             var html = new HtmlHelperMocks<object>().HtmlHelper;
-            var rules = new RuleSet(new[] { "someProperty" }.ToLookup(x => x, x => (RuleBase)new RequiredRule()));
+            var rules = new RuleSet(new[] { "someProperty" }.ToLookup(x => x, x => (Rule)new RequiredRule()));
 
             // Capture params passed to mockFormatter
             var mockFormatter = new Moq.Mock<IValidationConfigFormatter>(MockBehavior.Strict);
@@ -100,7 +100,7 @@ namespace xVal.Tests.HtmlHelpers
         {
             // Arrange
             var html = new HtmlHelperMocks<object>().HtmlHelper;
-            var rules = new RuleSet(new[] { "someProperty" }.ToLookup(x => x, x => (RuleBase)new RequiredRule()));
+            var rules = new RuleSet(new[] { "someProperty" }.ToLookup(x => x, x => (Rule)new RequiredRule()));
 
             // Capture params passed to mockFormatter
             var mockFormatter = new Moq.Mock<IValidationConfigFormatter>(MockBehavior.Strict);

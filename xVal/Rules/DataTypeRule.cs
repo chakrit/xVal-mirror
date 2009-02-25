@@ -1,6 +1,6 @@
 namespace xVal.Rules
 {
-    public class DataTypeRule : RuleBase
+    public class DataTypeRule : Rule
     {
         public DataType Type { get; private set; }
 

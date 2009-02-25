@@ -33,7 +33,7 @@ namespace xVal.Html
             return tb.ToString(allRules.Any() ? TagRenderMode.Normal : TagRenderMode.SelfClosing);
         }
 
-        private static string FormatSingleRule(RuleBase rule, string forField)
+        private static string FormatSingleRule(Rule rule, string forField)
         {
             var tb = new TagBuilder(rule.RuleName);
             tb.MergeAttributes(rule.ListParameters());

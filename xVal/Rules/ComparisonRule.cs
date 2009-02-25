@@ -1,6 +1,6 @@
 namespace xVal.Rules
 {
-    public class ComparisonRule : RuleBase
+    public class ComparisonRule : Rule
     {
         public Operator ComparisonOperator { get; private set; }
         public string PropertyToCompare { get; private set; }

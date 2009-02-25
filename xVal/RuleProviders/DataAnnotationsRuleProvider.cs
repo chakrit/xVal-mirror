@@ -28,13 +28,13 @@ namespace xVal.RuleProviders
             ruleEmitters.AddSingle<RegularExpressionAttribute>(x => new RegularExpressionRule(x.Pattern));
         }
 
-        protected override IEnumerable<RuleBase> GetRulesFromProperty(PropertyDescriptor propertyDescriptor)
+        protected override IEnumerable<Rule> GetRulesFromProperty(PropertyDescriptor propertyDescriptor)
         {
             return base.GetRulesFromProperty(propertyDescriptor)
                    .Union(GetNumericValueTypeRulesFromProperty(propertyDescriptor));
         }
 
-        private static IEnumerable<RuleBase> GetNumericValueTypeRulesFromProperty(PropertyDescriptor propertyDescriptor)
+        private static IEnumerable<Rule> GetNumericValueTypeRulesFromProperty(PropertyDescriptor propertyDescriptor)
         {
             // System.ComponentModel.DataAnnotations doesn't have any attribute to represent "int" or "double",
             // so we'll infer it directly from the property type
@@ -52,7 +52,7 @@ namespace xVal.RuleProviders
             return Nullable.GetUnderlyingType(type) ?? type;
         }
 
-        protected override IEnumerable<RuleBase> MakeValidationRulesFromAttribute(ValidationAttribute att)
+        protected override IEnumerable<Rule> MakeValidationRulesFromAttribute(ValidationAttribute att)
         {
             var rules = ruleEmitters.EmitRules(att);
             foreach (var rule in rules)
@@ -60,7 +60,7 @@ namespace xVal.RuleProviders
             return rules;
         }
 
-        private static void ApplyErrorMessage(ValidationAttribute att, RuleBase result)
+        private static void ApplyErrorMessage(ValidationAttribute att, Rule result)
         {
             if(att.ErrorMessage != null)
                 result.ErrorMessage = att.ErrorMessage;
@@ -70,7 +70,7 @@ namespace xVal.RuleProviders
             }
         }
 
-        private RuleBase ConvertDataTypeAttribute(DataTypeAttribute dt)
+        private Rule ConvertDataTypeAttribute(DataTypeAttribute dt)
         {
             // Is this one that should be handled as a RegEx?
             string regEx = ToRegEx(dt.DataType);
@@ -83,7 +83,7 @@ namespace xVal.RuleProviders
             return null;
         }
 
-        private static RuleBase ConvertRangeAttribute(RangeAttribute r)
+        private static Rule ConvertRangeAttribute(RangeAttribute r)
         {
             if (r.OperandType == typeof (string))
                 return new RangeRule(Convert.ToString(r.Minimum), Convert.ToString(r.Maximum));

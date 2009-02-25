@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace xVal.Rules
 {
-    public class RangeRule : RuleBase
+    public class RangeRule : Rule
     {
         public object Min { get; private set; }
         public object Max { get; private set; }

@@ -239,7 +239,7 @@ namespace xVal.Tests.RuleProviders
 
         private static TRule TestConversion<TAttribute, TRule>(params object[] attributeConstructorParams)
             where TAttribute : ValidationAttribute
-            where TRule : RuleBase
+            where TRule : Rule
         {
             return RulesProviderTestHelpers.TestConversion<TAttribute, TRule>(new DataAnnotationsRuleProvider(), attributeConstructorParams);
         }

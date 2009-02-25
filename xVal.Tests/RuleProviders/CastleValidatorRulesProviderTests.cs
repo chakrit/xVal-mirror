@@ -48,7 +48,7 @@ namespace xVal.Tests.RuleProviders
         [Fact]
         public void Converts_ValidateDateTimeAttribute_To_DataType_DateTime_Plus_Required()
         {
-            var rules = TestConversionToMultipleRules<ValidateDateTimeAttribute, RuleBase>();
+            var rules = TestConversionToMultipleRules<ValidateDateTimeAttribute, Rule>();
             Assert.Equal(2, rules.Count());
             var dataTypeRule = rules.OfType<DataTypeRule>().Single();
             Assert.Equal(DataTypeRule.DataType.DateTime, dataTypeRule.Type);
@@ -58,7 +58,7 @@ namespace xVal.Tests.RuleProviders
         [Fact]
         public void Converts_ValidateDateAttribute_To_DataType_Date_Plus_Required()
         {
-            var rules = TestConversionToMultipleRules<ValidateDateAttribute, RuleBase>();
+            var rules = TestConversionToMultipleRules<ValidateDateAttribute, Rule>();
             Assert.Equal(2, rules.Count());
             var dataTypeRule = rules.OfType<DataTypeRule>().Single();
             Assert.Equal(DataTypeRule.DataType.Date, dataTypeRule.Type);
@@ -68,7 +68,7 @@ namespace xVal.Tests.RuleProviders
         [Fact]
         public void Converts_ValidateDecimalAttribute_To_DataType_Decimal_Plus_Required()
         {
-            var rules = TestConversionToMultipleRules<ValidateDecimalAttribute, RuleBase>();
+            var rules = TestConversionToMultipleRules<ValidateDecimalAttribute, Rule>();
             Assert.Equal(2, rules.Count());
             var dataTypeRule = rules.OfType<DataTypeRule>().Single();
             Assert.Equal(DataTypeRule.DataType.Decimal, dataTypeRule.Type);
@@ -78,7 +78,7 @@ namespace xVal.Tests.RuleProviders
         [Fact]
         public void Converts_ValidateDoubleAttribute_To_DataType_Decimal_Plus_Required() // No point distinguishing between decimal and double on client
         {
-            var rules = TestConversionToMultipleRules<ValidateDoubleAttribute, RuleBase>();
+            var rules = TestConversionToMultipleRules<ValidateDoubleAttribute, Rule>();
             Assert.Equal(2, rules.Count());
             var dataTypeRule = rules.OfType<DataTypeRule>().Single();
             Assert.Equal(DataTypeRule.DataType.Decimal, dataTypeRule.Type);
@@ -88,7 +88,7 @@ namespace xVal.Tests.RuleProviders
         [Fact]
         public void Converts_ValidateSingleAttribute_To_DataType_Decimal_Plus_Required() // No point distinguishing between decimal and single on client
         {
-            var rules = TestConversionToMultipleRules<ValidateSingleAttribute, RuleBase>();
+            var rules = TestConversionToMultipleRules<ValidateSingleAttribute, Rule>();
             Assert.Equal(2, rules.Count());
             var dataTypeRule = rules.OfType<DataTypeRule>().Single();
             Assert.Equal(DataTypeRule.DataType.Decimal, dataTypeRule.Type);
@@ -98,7 +98,7 @@ namespace xVal.Tests.RuleProviders
         [Fact]
         public void Converts_ValidateIntegerAttribute_To_DataType_Integer_Plus_Required()
         {
-            var rules = TestConversionToMultipleRules<ValidateIntegerAttribute, RuleBase>();
+            var rules = TestConversionToMultipleRules<ValidateIntegerAttribute, Rule>();
             Assert.Equal(2, rules.Count());
             var dataTypeRule = rules.OfType<DataTypeRule>().Single();
             Assert.Equal(DataTypeRule.DataType.Integer, dataTypeRule.Type);
@@ -176,14 +176,14 @@ namespace xVal.Tests.RuleProviders
 
         private static TRule TestConversion<TAttribute, TRule>(params object[] attributeConstructorParams)
             where TAttribute : AbstractValidationAttribute
-            where TRule : RuleBase
+            where TRule : Rule
         {
             return RulesProviderTestHelpers.TestConversion<TAttribute, TRule>(new CastleValidatorRulesProvider(), attributeConstructorParams);
         }
 
         private static IEnumerable<TRule> TestConversionToMultipleRules<TAttribute, TRule>(params object[] attributeConstructorParams)
             where TAttribute : AbstractValidationAttribute
-            where TRule : RuleBase
+            where TRule : Rule
         {
             return RulesProviderTestHelpers.TestConversionToMultipleRules<TAttribute, TRule>(new CastleValidatorRulesProvider(), attributeConstructorParams);
         }

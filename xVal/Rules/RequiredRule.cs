@@ -1,6 +1,6 @@
 namespace xVal.Rules
 {
-    public class RequiredRule : RuleBase
+    public class RequiredRule : Rule
     {
         public RequiredRule() : base("Required")
         {

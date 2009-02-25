@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace xVal.Rules
 {
-    public abstract class RuleBase
+    public abstract class Rule
     {
         public string RuleName { get; private set; }
         private string errorMessage;
@@ -17,7 +17,7 @@ namespace xVal.Rules
             set
             {
                 if((errorMessageResourceType != null) || (errorMessageResourceName != null))
-                    throw new InvalidOperationException("Can't set ErrorMessage: this RuleBase is already in resource mode");
+                    throw new InvalidOperationException("Can't set ErrorMessage: this Rule is already in resource mode");
                 errorMessage = value;
             }
         }
@@ -29,7 +29,7 @@ namespace xVal.Rules
             set
             {
                 if(errorMessage != null)
-                    throw new InvalidOperationException("Can't set ErrorMessageResourceType: this RuleBase is already in fixed-string mode");
+                    throw new InvalidOperationException("Can't set ErrorMessageResourceType: this Rule is already in fixed-string mode");
                 errorMessageResourceType = value;
             }
         }
@@ -41,7 +41,7 @@ namespace xVal.Rules
             set
             {
                 if (errorMessage != null)
-                    throw new InvalidOperationException("Can't set ErrorMessageResourceName: this RuleBase is already in fixed-string mode");
+                    throw new InvalidOperationException("Can't set ErrorMessageResourceName: this Rule is already in fixed-string mode");
                 errorMessageResourceName = value;
             }
         }
@@ -62,7 +62,7 @@ namespace xVal.Rules
             }
         }
 
-        protected RuleBase(string ruleName)
+        protected Rule(string ruleName)
         {
             RuleName = ruleName;
         }

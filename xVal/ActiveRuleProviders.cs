@@ -9,7 +9,8 @@ namespace xVal
     public static class ActiveRuleProviders
     {
         public static IList<IRulesProvider> Providers = new List<IRulesProvider> {
-            new DataAnnotationsRuleProvider()
+            new DataAnnotationsRuleProvider(),
+            new CustomRulesProvider()
         };
 
         public static RuleSet GetRulesForType(Type type)

@@ -7,6 +7,11 @@
         <script type="text/javascript" src="<%= ResolveUrl("~/Plugins/jQuery.Validate/jquery.validate.js") %>"></script>
         <script type="text/javascript" src="<%= ResolveUrl("~/Plugins/jQuery.Validate/xVal.jquery.validate.js?nocache=" + DateTime.Now.Ticks) %>"></script>
         <script type="text/javascript" src="<%= ResolveUrl("~/Messages/xVal.Messages.ForUnitTests.js") %>"></script>
+        <script type="text/javascript">
+            function EqualsFixedStringRule(value, element, params) {
+                return (value == params.mustMatch);
+            }
+        </script>        
     </head>
     <body>
         <% using(Html.BeginForm()) { %>

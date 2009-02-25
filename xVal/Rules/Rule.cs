@@ -47,7 +47,7 @@ namespace xVal.Rules
         }
 
         private readonly static Type[] EmptyTypeArray = new Type[] {};
-        public string ErrorMessageOrResourceString
+        public virtual string ErrorMessageOrResourceString
         {
             get
             {

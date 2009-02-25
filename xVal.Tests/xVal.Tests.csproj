@@ -75,6 +75,7 @@
     <Compile Include="HtmlHelpers\XmlValidationConfigFormatterTests.cs" />
     <Compile Include="RuleProviders\CachingRulesProviderTests.cs" />
     <Compile Include="RuleProviders\CastleValidatorRulesProviderTests.cs" />
+    <Compile Include="RuleProviders\CustomRulesProviderTests.cs" />
     <Compile Include="RuleProviders\NHibernateValidatorRulesProviderTests.cs" />
     <Compile Include="Rules\RuleTests.cs" />
     <Compile Include="Rules\RulesTests.cs" />

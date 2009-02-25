@@ -244,9 +244,36 @@ xVal.Plugins["AspNetNative"] = {
                              { name: "operator", value: operator}],
                     errorMessage: this._formatString(fixedErrorText || message, [ruleParams.PropertyToCompare])
                 };
+                
+            case "Custom":
+                var ruleFunction = this._parseAsFunctionWithWarnings(ruleParams.Function);
+                if (ruleFunction != null) {
+                    var evaluatedParams = ruleParams.Parameters == "null" ? null : eval("(" + ruleParams.Parameters + ")");
+                    return {
+                        evaluationFunction: "xVal_AspNetNative_CustomJavaScriptFunction",
+                        params: [{ name: "ruleFunction", value: ruleFunction },
+                                 { name: "params", value: evaluatedParams}],
+                        errorMessage: fixedErrorText || message
+                    };
+                }
+                break;                
         }
         return null;
     },
+
+    _parseAsFunctionWithWarnings: function(functionString) {
+        var result;
+        try { result = eval("(" + functionString + ")") }
+        catch (ex) {
+            alert("Custom rule error: Could not find or could not parse the function '" + functionString + "'");
+            return null;
+        }
+        if (typeof (result) != 'function') {
+            alert("Custom rule error: The JavaScript object '" + functionString + "' is not a function.");
+            return null;
+        }
+        return result;
+    },    
 
     _hideElementOnChange: function(elementToWatch, elementToHide) {
         var handler = function() { elementToHide.style.display = "none"; };
@@ -340,4 +367,11 @@ function xVal_AspNetNative_CreditCardLuhn(val) {
     for (var i = value.length - 1; i >= 0; i -= 2)
         sum += parseInt(value.charAt(i), 10);
     return (sum % 10) == 0;
+}
+
+function xVal_AspNetNative_CustomJavaScriptFunction(context) {
+    var value = ValidatorGetValue(context.controltovalidate);
+    if (ValidatorTrim(value).length == 0)
+        return true;
+    return context.ruleFunction(value, context.controltovalidate, context.params);
 }

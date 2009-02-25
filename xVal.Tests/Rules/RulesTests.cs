@@ -143,5 +143,49 @@ namespace xVal.Tests.Rules
             Assert.Equal("password1", parameters["PropertyToCompare"]);
             Assert.Equal("Equals", parameters["ComparisonOperator"]);
         }
+
+        [Fact]
+        public void CustomRule_Takes_JavaScriptFunction_Params_And_ErrorMessageString()
+        {
+            var jsParam = new { key = "value", another = "something else" };
+            var rule = new CustomRule("myJsFunction", jsParam, "My error");
+            var parameters = rule.ListParameters();
+            Assert.Equal(2, parameters.Count);
+            Assert.Equal("myJsFunction", parameters["Function"]);
+            Assert.Equal(@"{""key"":""value"",""another"":""something else""}", parameters["Parameters"]);
+            Assert.Equal("My error", rule.ErrorMessageOrResourceString);
+        }
+
+        [Fact]
+        public void CustomRule_Takes_JavaScriptFunction_Params_And_ErrorMessageAccessor()
+        {
+            var jsParam = new { key = "value", another = "something else" };
+            string error = "";
+            Func<string> errorAccessor = () => error;
+            var rule = new CustomRule("myJsFunction", jsParam, errorAccessor);
+            var parameters = rule.ListParameters();
+            Assert.Equal(2, parameters.Count);
+            Assert.Equal("myJsFunction", parameters["Function"]);
+            Assert.Equal(@"{""key"":""value"",""another"":""something else""}", parameters["Parameters"]);
+            error = "Updated error";
+            Assert.Equal("Updated error", rule.ErrorMessageOrResourceString);
+        }
+
+        [Fact]
+        public void CustomRule_Takes_JavaScriptFunction_Params_And_ErrorMessage_Resource_Info()
+        {
+            var jsParam = new { key = "value", another = "something else" };
+            var rule = new CustomRule("myJsFunction", jsParam, typeof(MyResources), "SomeMessage");
+            var parameters = rule.ListParameters();
+            Assert.Equal(2, parameters.Count);
+            Assert.Equal("myJsFunction", parameters["Function"]);
+            Assert.Equal(@"{""key"":""value"",""another"":""something else""}", parameters["Parameters"]);
+            Assert.Equal("Hello from MyResources", rule.ErrorMessageOrResourceString);
+        }
+
+        private static class MyResources
+        {
+            public static string SomeMessage { get { return "Hello from MyResources"; } }
+        }
     }
 }

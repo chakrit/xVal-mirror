@@ -139,27 +139,52 @@ xVal.AttachValidator = function(elementPrefix, rulesConfig, pluginName) {
                             break;
                         case "CreditCardLuhn":
                             options.xVal_creditCardLuhn = true;
-                            if(errorText != null) options.messages = { xVal_creditCardLuhn: errorText };
+                            if (errorText != null) options.messages = { xVal_creditCardLuhn: errorText };
                             break;
                     }
                     break;
 
                 case "RegEx":
                     options.xVal_regex = [ruleParams.Pattern, ruleParams.Options];
-                    if(errorText != null) options.messages = { xVal_regex: errorText };
+                    if (errorText != null) options.messages = { xVal_regex: errorText };
                     break;
 
                 case "Comparison":
                     var elemToCompareId = this._makeAspNetMvcHtmlHelperID((elementPrefix ? elementPrefix + "." : "") + ruleParams.PropertyToCompare);
                     var elemToCompare = document.getElementById(elemToCompareId);
                     if (elemToCompare != null) {
-                        options.xVal_comparison = [ruleParams.PropertyToCompare, elemToCompare, ruleParams.ComparisonOperator];                        
+                        options.xVal_comparison = [ruleParams.PropertyToCompare, elemToCompare, ruleParams.ComparisonOperator];
                         if (errorText != null) options.messages = { xVal_comparison: errorText };
+                    }
+                    break;
+
+                case "Custom":
+                    var ruleFunction = this._parseAsFunctionWithWarnings(ruleParams.Function);
+                    if (ruleFunction != null) {
+                        var customFunctionName = this._registerCustomValidationFunction(ruleFunction);
+                        var evaluatedParams = ruleParams.Parameters == "null" ? null : eval("(" + ruleParams.Parameters + ")");
+                        options[customFunctionName] = evaluatedParams || true;
+                        options.messages = [];
+                        options.messages[customFunctionName] = errorText;
                     }
                     break;
             }
 
             element.rules("add", options);
+        },
+
+        _parseAsFunctionWithWarnings: function(functionString) {
+            var result;
+            try { result = eval("(" + functionString + ")") }
+            catch (ex) {
+                alert("Custom rule error: Could not find or could not parse the function '" + functionString + "'");
+                return null;
+            }
+            if (typeof (result) != 'function') {
+                alert("Custom rule error: The JavaScript object '" + functionString + "' is not a function.");
+                return null;
+            }
+            return result;
         },
 
         _associateNearbyValidationMessageSpanWithElement: function(element) {
@@ -182,6 +207,17 @@ xVal.AttachValidator = function(elementPrefix, rulesConfig, pluginName) {
                     unhighlight: function(element) { $(element).removeClass("input-validation-error"); }
                 });
             }
+        },
+
+        _registerCustomValidationFunction: function(evalFn) {
+            jQuery.validator.xValCustomFunctionCount = (jQuery.validator.xValCustomFunctionCount || 0) + 1;
+            var functionName = "xVal_customFunction_" + jQuery.validator.xValCustomFunctionCount;
+            jQuery.validator.addMethod(functionName, function(value, element, params) {
+                if (this.optional(element))
+                    return true;
+                return evalFn(value, element, params);
+            });
+            return functionName;
         },
 
         _ensureCustomFunctionsRegistered: function() {

@@ -138,6 +138,12 @@ namespace xVal.ClientSidePlugins.Plugins.jQuery.Validate.Tests
             );
         }
 
+        [Fact]
+        public void Custom_Enforced()
+        {
+            TestFieldValidation("myprefix.Custom", "hey", "hello", "Please enter the string 'hello'");
+        }
+
         private void TestFieldValidation(string inputField, string invalidValue, string validValue, string expectedFailureMessage)
         {
             TestFieldValidation(inputField, invalidValue, validValue, expectedFailureMessage, null);

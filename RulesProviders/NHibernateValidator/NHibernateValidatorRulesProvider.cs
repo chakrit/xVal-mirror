@@ -51,10 +51,18 @@ namespace xVal.RulesProviders.NHibernateValidator
         {
             foreach (var rule in ruleEmitters.EmitRules(att)) {
                 if(rule != null) {
-                    rule.ErrorMessage = att.Message;
+                    rule.ErrorMessage = MessageIfSpecified(att.Message);
                     yield return rule;
                 }
             }
+        }
+
+        private string MessageIfSpecified(string message)
+        {
+            // We don't want to display the default {validator.*} messages
+            if ((message != null) && !message.StartsWith("{validator."))
+                return message;
+            return null;
         }
 
         private RegularExpressionRule MakeDigitsRule(DigitsAttribute att)

@@ -32,7 +32,14 @@ namespace xVal.ServerSide
             if (errorFilter == null) throw new ArgumentNullException("errorFilter");
             prefix = prefix == null ? "" : prefix + ".";
             foreach (var errorInfo in Errors.Where(errorFilter)) {
-                modelState.AddModelError(prefix + errorInfo.PropertyName, errorInfo.ErrorMessage);
+                var key = prefix + errorInfo.PropertyName;
+                modelState.AddModelError(key, errorInfo.ErrorMessage);
+
+                // Workaround for http://xval.codeplex.com/WorkItem/View.aspx?WorkItemId=1297 (ASP.NET MVC bug)
+                // Ensure that some value object is registered in ModelState under this key
+                ModelState existingModelStateValue;
+                if(modelState.TryGetValue(key, out existingModelStateValue) && existingModelStateValue.Value == null)
+                    existingModelStateValue.Value = new ValueProviderResult(null, null, null);
             }
         }
     }

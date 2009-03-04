@@ -89,5 +89,38 @@ namespace xVal.Tests.ServerSide
             Assert.Equal("e4", modelState["my.prefix.p2"].Errors[1].ErrorMessage);
             Assert.Equal("e5", modelState["my.prefix.p3"].Errors[0].ErrorMessage);
         }
+
+        [Fact]
+        public void Ensures_NonNull_Value_Is_In_ModelState_For_Each_Key()
+        {
+            // Arrange
+            var ex = new RulesException("myProp", "myError");
+            var modelState = new ModelStateDictionary();
+
+            // Act
+            ex.AddModelStateErrors(modelState, null);
+
+            // Assert
+            Assert.Equal(1, modelState.Keys.Count());
+            Assert.NotNull(modelState["myProp"].Value);
+        }
+
+        [Fact]
+        public void Does_Not_Overwrite_Any_Existing_ModelState_Value()
+        {
+            // Arrange
+            object rawValue = new object();
+            var someValue = new ModelState { Value = new ValueProviderResult(rawValue, null, null)};
+            var ex = new RulesException("myProp", "myError");
+            var modelState = new ModelStateDictionary();
+            modelState.Add("myProp", someValue);
+
+            // Act
+            ex.AddModelStateErrors(modelState, null);
+
+            // Assert
+            Assert.Equal(1, modelState.Keys.Count());
+            Assert.Same(rawValue, modelState["myProp"].Value.RawValue);
+        }
     }
 }

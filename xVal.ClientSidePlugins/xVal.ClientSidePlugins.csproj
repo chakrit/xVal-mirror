@@ -82,8 +82,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
+    <Content Include="Messages\xVal.Messages.da-DK.js" />
+    <Content Include="Messages\xVal.Messages.de-DE.js" />
     <Content Include="Messages\xVal.Messages.en-US.js" />
+    <Content Include="Messages\xVal.Messages.es-ES.js" />
     <Content Include="Messages\xVal.Messages.ForUnitTests.js" />
+    <Content Include="Messages\xVal.Messages.fr-FR.js" />
+    <Content Include="Messages\xVal.Messages.nl-NL.js" />
+    <Content Include="Messages\xVal.Messages.pl-PL.js" />
+    <Content Include="Messages\xVal.Messages.pt-BR.js" />
+    <Content Include="Messages\xVal.Messages.sv-SE.js" />
     <Content Include="Plugins\AspNetNative\AllPossibleRules.aspx" />
     <Content Include="Plugins\AspNetNative\xVal.AspNetNative.js" />
     <Content Include="Plugins\jQuery.Validate\jquery.validate.js" />

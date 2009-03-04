@@ -1,5 +1,4 @@
-﻿
-var xVal = xVal || {};
+﻿var xVal = xVal || {};
 xVal.Messages = {
     "Required" : "Denne værdi er påkrævet.",
     "DataType_EmailAddress" : "Indtast venligst en gyldig email-adresse.",

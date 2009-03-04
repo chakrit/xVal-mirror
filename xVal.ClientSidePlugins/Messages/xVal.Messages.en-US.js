@@ -6,9 +6,6 @@
  *  (2) Edit your copy to specify messages in your chosen language
  *  (3) Reference your file in your project using a <script> tag.
  * Simply referencing your custom file will override the default messages with your messages.
- *
- * Note that at present this only works when using jQuery Validation (not ASP.NET native) but
- * I will add localisation support in ASP.NET native validation shortly.
 */
 var xVal = xVal || {};
 xVal.Messages = {

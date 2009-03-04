@@ -1,9 +1,4 @@
-﻿
-/* 
- * Nota: En este momento estos mensajes solo funcionan si utiliza valdacion con JQuery (no con validacion nativa a ASP.NET)
- * Soporte para validacion con ASP.NET sera anidida pronto.
-*/
-var xVal = xVal || {};
+﻿var xVal = xVal || {};
 xVal.Messages = {
     "Required" : "Este valor es necesario.",
     "DataType_EmailAddress" : "Por favor ingrese una direccion de email valida.",

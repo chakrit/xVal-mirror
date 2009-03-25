@@ -17,12 +17,19 @@ xVal.AttachValidator = function(elementPrefix, rulesConfig, pluginName) {
 // http://xval.codeplex.com/
 // (c) 2009 Steven Sanderson
 // License: Microsoft Public License (Ms-PL) (http://www.opensource.org/licenses/ms-pl.html)
-    
+
 var Page_Validators;
 var Page_ValidationActive;
 
 xVal.Plugins["AspNetNative"] = {
     AttachValidator: function(elementPrefix, rulesConfig) {
+        var self = this;
+        xVal.domReadyUtils.executeWhenDomIsReady(function() {
+            self._attachValidatorDomIsLoaded(elementPrefix, rulesConfig);
+        });
+    },
+
+    _attachValidatorDomIsLoaded: function(elementPrefix, rulesConfig) {
         Page_Validators = Page_Validators || new Array();
 
         for (var i = 0; i < rulesConfig.Fields.length; i++) {
@@ -244,7 +251,7 @@ xVal.Plugins["AspNetNative"] = {
                              { name: "operator", value: operator}],
                     errorMessage: this._formatString(fixedErrorText || message, [ruleParams.PropertyToCompare])
                 };
-                
+
             case "Custom":
                 var ruleFunction = this._parseAsFunctionWithWarnings(ruleParams.Function);
                 if (ruleFunction != null) {
@@ -256,7 +263,7 @@ xVal.Plugins["AspNetNative"] = {
                         errorMessage: fixedErrorText || message
                     };
                 }
-                break;                
+                break;
         }
         return null;
     },
@@ -273,7 +280,7 @@ xVal.Plugins["AspNetNative"] = {
             return null;
         }
         return result;
-    },    
+    },
 
     _hideElementOnChange: function(elementToWatch, elementToHide) {
         var handler = function() { elementToHide.style.display = "none"; };
@@ -375,3 +382,26 @@ function xVal_AspNetNative_CustomJavaScriptFunction(context) {
         return true;
     return context.ruleFunction(value, context.controltovalidate, context.params);
 }
+
+// --- DOM-ready utils - provides a mechanism for deferring function execution until the DOM is ready
+// (just like jQuery's $() function, but without depending on jQuery)
+xVal.domReadyUtils = {
+    domIsReady: false,
+    executeWhenDomIsReady: function(handler) {
+        if (this.domIsReady)
+            handler();
+        else
+            this._crossBrowserAttachEventHandler(window, "load", handler);
+    },
+    _crossBrowserAttachEventHandler: function(target, eventType, handler) {
+        if (target.addEventListener)
+            target.addEventListener(eventType, handler, false);
+        else if (target.attachEvent)
+            target.attachEvent('on' + eventType, handler);
+        else
+            target['on' + eventType] = handler;
+    }
+};
+xVal.domReadyUtils.executeWhenDomIsReady(function() {
+    xVal.domReadyUtils.domIsReady = true;
+});

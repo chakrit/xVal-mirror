@@ -100,19 +100,40 @@ namespace xVal.Tests.HtmlHelpers
         {
             // Arrange
             var html = new HtmlHelperMocks<object>().HtmlHelper;
-            var rules = new RuleSet(new[] { "someProperty" }.ToLookup(x => x, x => (Rule)new RequiredRule()));
 
             // Capture params passed to mockFormatter
             var mockFormatter = new Moq.Mock<IValidationConfigFormatter>(MockBehavior.Strict);
-            mockFormatter.Expect(x => x.FormatRules(rules)).Returns("{rulesWouldGoHere}");
+            mockFormatter.Expect(x => x.FormatRules(RuleSet.Empty)).Returns("{rulesWouldGoHere}");
 
             ValidationInfo.Formatter = mockFormatter.Object;
 
             // Act
-            var result = html.ClientSideValidation("my.prefix", rules);
+            var result = html.ClientSideValidation("my.prefix", RuleSet.Empty);
+            var formattedAsString = result.ToString();
 
             // Assert
-            Assert.Equal(@"<script type=""text/javascript"">xVal.AttachValidator(""my.prefix"", {rulesWouldGoHere})</script>", result.ToString());
+            Assert.Equal(@"<script type=""text/javascript"">xVal.AttachValidator(""my.prefix"", {rulesWouldGoHere})</script>", formattedAsString);
+        }
+
+        [Fact]
+        public void ClientSideValidation_Can_Suppress_Script_Tags()
+        {
+            // Arrange
+            var html = new HtmlHelperMocks<object>().HtmlHelper;
+
+            // Capture params passed to mockFormatter
+            var mockFormatter = new Moq.Mock<IValidationConfigFormatter>(MockBehavior.Strict);
+            mockFormatter.Expect(x => x.FormatRules(RuleSet.Empty)).Returns("{rulesWouldGoHere}");
+
+            ValidationInfo.Formatter = mockFormatter.Object;
+            
+            // Act
+            var result = html.ClientSideValidation("my.prefix", RuleSet.Empty);
+            result.SuppressScriptTags();
+            var formattedAsString = result.ToString();
+
+            // Assert
+            Assert.Equal(@"xVal.AttachValidator(""my.prefix"", {rulesWouldGoHere})", formattedAsString);
         }
     }
 }

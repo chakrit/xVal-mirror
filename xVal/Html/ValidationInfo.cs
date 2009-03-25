@@ -13,21 +13,35 @@ namespace xVal.Html
     public class ValidationInfo
     {
         public static IValidationConfigFormatter Formatter = new JsonValidationConfigFormatter();
+        
+        private enum RenderMode
+        {
+            ConfigOnly,          // Renders just the formatted validation config
+            AttachScript,        // Renders xVal.AttachValidator(...config...)
+            CompleteScriptBlock  // Renders <script>xVal.AttachValidator( ...config... )</script>
+        }
+        private RenderMode currentRenderMode;
 
         private RuleSet rules;
         private readonly List<KeyValuePair<string, Rule>> addedRules = new List<KeyValuePair<string, Rule>>();
-        private readonly bool attachValidator;
         private readonly string elementPrefix;
 
+        /// <summary>
+        /// Constructs a ValidationInfo that simply format and render the rules
+        /// </summary>
         public ValidationInfo(RuleSet rules)
         {
             if (rules == null) throw new ArgumentNullException("rules");
             this.rules = rules;
+            currentRenderMode = RenderMode.ConfigOnly;
         }
 
+        /// <summary>
+        /// Constructs a ValidationInfo that will render JavaScript code that attaches the rules to DOM elements
+        /// </summary>
         public ValidationInfo(RuleSet rules, string attachToElementPrefix) : this(rules)
         {
-            attachValidator = true;
+            currentRenderMode = RenderMode.CompleteScriptBlock;
             elementPrefix = attachToElementPrefix;
         }
 
@@ -37,19 +51,38 @@ namespace xVal.Html
             return this;
         }
 
+        public ValidationInfo SuppressScriptTags()
+        {
+            if (currentRenderMode == RenderMode.CompleteScriptBlock)
+                currentRenderMode = RenderMode.AttachScript;
+            return this;
+        }
+
         public override string ToString()
         {
             MergeAddedRulesIntoRuleSet();
             var formattedRules = Formatter.FormatRules(rules);
-            if (!attachValidator)
+            if (currentRenderMode == RenderMode.ConfigOnly)
                 return formattedRules;
             else {
-                var tb = new TagBuilder("script");
-                tb.MergeAttribute("type", "text/javascript");
                 var elementPrefixOrNull = elementPrefix == null ? "null" : string.Format("\"{0}\"", elementPrefix);
-                tb.InnerHtml = string.Format("xVal.AttachValidator({0}, {1})", elementPrefixOrNull, formattedRules);
-                return tb.ToString(TagRenderMode.Normal);
+                var attachValidatorStatement = string.Format("xVal.AttachValidator({0}, {1})", elementPrefixOrNull, formattedRules);
+                if (currentRenderMode == RenderMode.AttachScript)
+                    return attachValidatorStatement;
+                else if(currentRenderMode == RenderMode.CompleteScriptBlock)
+                    return WrapInScriptTag(attachValidatorStatement);
+                else {
+                    throw new InvalidOperationException("Unknown render mode: " + currentRenderMode);
+                }
             }
+        }
+
+        private static string WrapInScriptTag(string statement)
+        {
+            var tb = new TagBuilder("script");
+            tb.MergeAttribute("type", "text/javascript");
+            tb.InnerHtml = statement;
+            return tb.ToString(TagRenderMode.Normal);
         }
 
         private void MergeAddedRulesIntoRuleSet()

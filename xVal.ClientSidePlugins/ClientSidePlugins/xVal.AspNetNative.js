@@ -134,7 +134,7 @@ xVal.Plugins["AspNetNative"] = {
                 defaultMessageSet[1] = defaultMessageSet[1] || "Please enter a value no more than {0}.";
                 defaultMessageSet[2] = defaultMessageSet[2] || "Please enter a value between {0} and {1}.";
                 message = (min != null) ? ((max != null) ? defaultMessageSet[2]
-                                                         : defaultMessageSet[1])
+                                                         : defaultMessageSet[0])
                                         : defaultMessageSet[1];
 
                 var aspNetNativeType = ruleParams.Type == "string" ? "String" :

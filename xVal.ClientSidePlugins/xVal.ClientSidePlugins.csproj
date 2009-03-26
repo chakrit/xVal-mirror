@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Web.Testing.Light, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ExternalAssemblies\Microsoft.Web.Testing.Light.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Core">
@@ -63,22 +67,14 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Web.Mobile" />
-    <Reference Include="ThoughtWorks.Selenium.Core, Version=0.0.0.0, Culture=neutral">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ExternalAssemblies\ThoughtWorks.Selenium.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="xunit, Version=1.1.0.1323, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ExternalAssemblies\xunit.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MvcTestSite\GlobalApplication.cs" />
-    <Compile Include="MvcTestSite\TestController.cs" />
-    <Compile Include="Plugins\jQuery.Validate\Tests\AllPossibleRulesTests.cs" />
+    <Compile Include="Tests\MvcApplication.cs" />
+    <Compile Include="Tests\TestController.cs" />
+    <Compile Include="Tests\xVal.AspNetNative\AspNetNativeTests.cs" />
+    <Compile Include="Tests\xVal.jQuery.Validate\jQueryValidateTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestHelpers\SampleRuleSets.cs" />
-    <Compile Include="TestHelpers\SeleniumContext.cs" />
+    <Compile Include="Tests\SampleRuleSets.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Global.asax" />
@@ -92,19 +88,15 @@
     <Content Include="Messages\xVal.Messages.pl-PL.js" />
     <Content Include="Messages\xVal.Messages.pt-BR.js" />
     <Content Include="Messages\xVal.Messages.sv-SE.js" />
-    <Content Include="Plugins\AspNetNative\AllPossibleRules.aspx" />
-    <Content Include="Plugins\AspNetNative\xVal.AspNetNative.js" />
-    <Content Include="Plugins\jQuery.Validate\jquery.validate.js" />
-    <Content Include="Plugins\jQuery.Validate\Tests\AllPossibleRules.aspx" />
-    <Content Include="Plugins\jQuery.Validate\xVal.jquery.validate.js" />
-    <Content Include="TestHelpers\PersonForm.ascx" />
+    <Content Include="Tests\Default.aspx" />
+    <Content Include="Tests\DriverPage.aspx" />
+    <Content Include="Tests\xVal.AspNetNative\AllPossibleRules.aspx" />
+    <Content Include="ClientSidePlugins\xVal.AspNetNative.js" />
+    <Content Include="Tests\xVal.jQuery.Validate\jquery-1.3.2.js" />
+    <Content Include="Tests\xVal.jQuery.Validate\jquery.validate.js" />
+    <Content Include="Tests\xVal.jQuery.Validate\AllPossibleRules.aspx" />
+    <Content Include="ClientSidePlugins\xVal.jquery.validate.js" />
     <Content Include="Web.config" />
-    <Content Include="Scripts\jquery-1.2.6.js" />
-    <Content Include="Scripts\jquery-1.2.6.min.js" />
-    <Content Include="Scripts\MicrosoftAjax.js" />
-    <Content Include="Scripts\MicrosoftAjax.debug.js" />
-    <Content Include="Scripts\MicrosoftMvcAjax.js" />
-    <Content Include="Scripts\MicrosoftMvcAjax.debug.js" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\xVal\xVal.csproj">

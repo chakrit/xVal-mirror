@@ -5,7 +5,7 @@
 <head>
     <script type="text/javascript" src="<%= ClientScript.GetWebResourceUrl(typeof(System.Web.UI.Page), "WebForms.js") %>"></script>
     <script type="text/javascript" src="<%= ClientScript.GetWebResourceUrl(typeof(System.Web.UI.Page), "WebUIValidation.js") %>"></script>
-    <script type="text/javascript" src="<%= ResolveUrl("~/Plugins/AspNetNative/xVal.AspNetNative.js") %>"></script>
+    <script type="text/javascript" src="<%= ResolveUrl("~/ClientSidePlugins/xVal.AspNetNative.js") %>"></script>
     <script type="text/javascript" src="<%= ResolveUrl("~/Messages/xVal.Messages.ForUnitTests.js") %>"></script>
     <script type="text/javascript">
         function EqualsFixedStringRule(value, element, params) {
@@ -14,6 +14,8 @@
     </script>       
 </head>
 <body>
+    <%= Html.ClientSideValidation("myprefix", SampleRuleSets.AllPossibleRules) %>
+
     <% using(Html.BeginForm()) { %>
         Generated at <%= DateTime.Now.ToLongTimeString() %>
         
@@ -26,8 +28,7 @@
             <% } %>
         </table>        
         
-        <input type="submit" value="Post now" />
+        <input id="submitButton" type="submit" value="Post now" />
     <% } %>
-    <%= Html.ClientSideValidation("myprefix", SampleRuleSets.AllPossibleRules) %>
 </body>
 </html>

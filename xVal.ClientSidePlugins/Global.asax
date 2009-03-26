@@ -1,1 +1,1 @@
-﻿<%@ Application Inherits="xVal.ClientSidePlugins.MvcTestSite.GlobalApplication" Language="C#" %>
+﻿<%@ Application Inherits="xVal.ClientSidePlugins.Tests.MvcApplication" Language="C#" %>

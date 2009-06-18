@@ -1,6 +1,6 @@
 var xVal = xVal || {};
 xVal.Messages = {
-    "Required":"Detta värde krävs.",
+    "Required" : "Detta värde krävs.",
     "DataType_EmailAddress" : "Var god ange en giltlig e-post adress.",
     "DataType_Integer" : "Var god ange ett heltal.",
     "DataType_Decimal" : "Var god ange ett nummer.",

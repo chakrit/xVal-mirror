@@ -70,7 +70,7 @@ xVal.AttachValidator = function(elementPrefix, rulesConfig, pluginName) {
                         var minDate, maxDate;
                         if (typeof (ruleParams.MinYear) != 'undefined')
                             minDate = new Date(ruleParams.MinYear, ruleParams.MinMonth - 1, ruleParams.MinDay, ruleParams.MinHour, ruleParams.MinMinute, ruleParams.MinSecond);
-                        else if (typeof (ruleParams.MaxYear) != 'undefined')
+                        if (typeof (ruleParams.MaxYear) != 'undefined')
                             maxDate = new Date(ruleParams.MaxYear, ruleParams.MaxMonth - 1, ruleParams.MaxDay, ruleParams.MaxHour, ruleParams.MaxMinute, ruleParams.MaxSecond);
                         options.xVal_dateRange = [minDate, maxDate];
                         if (errorText != null) options.messages = { xVal_dateRange: $.format(errorText) };

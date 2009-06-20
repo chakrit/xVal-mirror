@@ -85,9 +85,22 @@ public class jQueryValidateTests
     }
 
     [WebTestMethod]
-    public void Range_DateTime_Enforced()
+    public void Range_DateTime_Min_Enforced()
     {
-        TestFieldValidation("myprefix_Range_DateTime_Field", "01/01/2000", "01/01/2002", "RANGE_DATETIME_MIN:2001-02-19 17:04:59");
+        TestFieldValidation("myprefix_Range_DateTime_Min_Field", "01/01/2000", "01/01/2002", "RANGE_DATETIME_MIN:2001-02-19 17:04:59");
+    }
+
+    [WebTestMethod]
+    public void Range_DateTime_Max_Enforced()
+    {
+        TestFieldValidation("myprefix_Range_DateTime_Max_Field", "01/01/2002", "01/01/2000", "RANGE_DATETIME_MAX:2001-02-19 17:04:59");
+    }
+
+    [WebTestMethod]
+    public void Range_DateTime_Range_Enforced()
+    {
+        TestFieldValidation("myprefix_Range_DateTime_Range_Field", "01/01/2000", "01/01/2002", "RANGE_DATETIME_MINMAX:2001-02-19 17:04:59,2003-04-15 06:20:25");
+        TestFieldValidation("myprefix_Range_DateTime_Range_Field", "01/01/2005", "01/01/2002", "RANGE_DATETIME_MINMAX:2001-02-19 17:04:59,2003-04-15 06:20:25");
     }
 
     [WebTestMethod]

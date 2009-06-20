@@ -84,6 +84,7 @@
     <Content Include="Messages\xVal.Messages.es-ES.js" />
     <Content Include="Messages\xVal.Messages.ForUnitTests.js" />
     <Content Include="Messages\xVal.Messages.fr-FR.js" />
+    <Content Include="Messages\xVal.Messages.it-IT.js" />
     <Content Include="Messages\xVal.Messages.nl-NL.js" />
     <Content Include="Messages\xVal.Messages.pl-PL.js" />
     <Content Include="Messages\xVal.Messages.pt-BR.js" />

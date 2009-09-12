@@ -14,9 +14,13 @@
         </script>        
     </head>
     <body>
-        <%= Html.ClientSideValidation("myprefix", SampleRuleSets.AllPossibleRules) %>
+        <%= Html.ClientSideValidation("myprefix", SampleRuleSets.AllPossibleRules).UseValidationSummary("myValidationSummary", "Client-generated validation summary header") %>
         
         <% using(Html.BeginForm()) { %>
+            <div id="myValidationSummary">
+                <%= Html.ValidationSummary("Server-generated validation summary header")%>
+            </div>
+        
             <table border="0">
                 <% foreach(var fieldName in SampleRuleSets.AllPossibleRules.Keys) { %>
                     <tr>

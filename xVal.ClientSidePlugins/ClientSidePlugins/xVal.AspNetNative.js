@@ -2,14 +2,14 @@
 var xVal = xVal || {};
 xVal.Plugins = xVal.Plugins || {};
 xVal.Messages = xVal.Messages || {};
-xVal.AttachValidator = function(elementPrefix, rulesConfig, pluginName) {
+xVal.AttachValidator = function(elementPrefix, rulesConfig, options, pluginName) {
     if (pluginName != null)
-        this.Plugins[pluginName].AttachValidator(elementPrefix, rulesConfig);
+        this.Plugins[pluginName].AttachValidator(elementPrefix, rulesConfig, options);
     else
         for (var key in this.Plugins) {
-        this.Plugins[key].AttachValidator(elementPrefix, rulesConfig);
-        return;
-    }
+            this.Plugins[key].AttachValidator(elementPrefix, rulesConfig, options);
+            return;
+        }
 };
 
 // xVal.AspNetNative.js
@@ -22,7 +22,7 @@ var Page_Validators;
 var Page_ValidationActive;
 
 xVal.Plugins["AspNetNative"] = {
-    AttachValidator: function(elementPrefix, rulesConfig) {
+    AttachValidator: function(elementPrefix, rulesConfig, options) {
         var self = this;
         xVal.domReadyUtils.executeWhenDomIsReady(function() {
             self._attachValidatorDomIsLoaded(elementPrefix, rulesConfig);

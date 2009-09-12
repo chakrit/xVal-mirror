@@ -112,7 +112,7 @@ namespace xVal.Tests.HtmlHelpers
             var formattedAsString = result.ToString();
 
             // Assert
-            Assert.Equal(@"<script type=""text/javascript"">xVal.AttachValidator(""my.prefix"", {rulesWouldGoHere})</script>", formattedAsString);
+            Assert.Equal(@"<script type=""text/javascript"">xVal.AttachValidator(""my.prefix"", {rulesWouldGoHere}, {})</script>", formattedAsString);
         }
 
         [Fact]
@@ -133,7 +133,27 @@ namespace xVal.Tests.HtmlHelpers
             var formattedAsString = result.ToString();
 
             // Assert
-            Assert.Equal(@"xVal.AttachValidator(""my.prefix"", {rulesWouldGoHere})", formattedAsString);
+            Assert.Equal(@"xVal.AttachValidator(""my.prefix"", {rulesWouldGoHere}, {})", formattedAsString);
+        }
+
+        [Fact]
+        public void ClientSideValidation_Includes_ValidationSummaryConfig()
+        {
+            // Arrange
+            var html = new HtmlHelperMocks<object>().HtmlHelper;
+
+            // Mock away the formatter so it doesn't affect this test
+            var mockFormatter = new Moq.Mock<IValidationConfigFormatter>();
+            mockFormatter.Expect(x => x.FormatRules(It.IsAny<RuleSet>())).Returns("rules");
+            ValidationInfo.Formatter = mockFormatter.Object;
+
+            // Act
+            var result = html.ClientSideValidation("my.prefix", RuleSet.Empty);
+            result.SuppressScriptTags().UseValidationSummary("testElementId", "Here's the validation summary message");
+            var formattedAsString = result.ToString();
+
+            // Assert
+            Assert.Equal(@"xVal.AttachValidator(""my.prefix"", rules, {""ValidationSummary"":{""ElementID"":""testElementId"",""HeaderMessage"":""Here\u0027s the validation summary message""}})", formattedAsString);
         }
     }
 }

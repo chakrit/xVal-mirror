@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
+using xVal.Html.Options;
 using xVal.RuleProviders;
 using xVal.Rules;
 using System.Linq;
@@ -12,19 +14,22 @@ namespace xVal.Html
     /// </summary>
     public class ValidationInfo
     {
+        private const string clientSideOptionsKey_validationSummaryOptions = "ValidationSummary";
+        private static readonly JavaScriptSerializer Serializer = new JavaScriptSerializer();
         public static IValidationConfigFormatter Formatter = new JsonValidationConfigFormatter();
-        
+
         private enum RenderMode
         {
             ConfigOnly,          // Renders just the formatted validation config
             AttachScript,        // Renders xVal.AttachValidator(...config...)
             CompleteScriptBlock  // Renders <script>xVal.AttachValidator( ...config... )</script>
         }
-        private RenderMode currentRenderMode;
 
+        private RenderMode currentRenderMode;
         private RuleSet rules;
         private readonly List<KeyValuePair<string, Rule>> addedRules = new List<KeyValuePair<string, Rule>>();
         private readonly string elementPrefix;
+        private readonly IDictionary<string, object> clientSideOptions = new Dictionary<string, object>();
 
         /// <summary>
         /// Constructs a ValidationInfo that simply format and render the rules
@@ -58,6 +63,19 @@ namespace xVal.Html
             return this;
         }
 
+        public ValidationInfo UseValidationSummary(string elementID)
+        {
+            return UseValidationSummary(elementID, null);
+        }
+
+        public ValidationInfo UseValidationSummary(string elementID, string message)
+        {
+            if (clientSideOptions.ContainsKey(clientSideOptionsKey_validationSummaryOptions))
+                throw new InvalidOperationException("Validation summary has already been configured once for this helper - don't try to configure it twice.");
+            clientSideOptions[clientSideOptionsKey_validationSummaryOptions] = new ValidationSummaryOptions(elementID, message);
+            return this;
+        }
+
         public override string ToString()
         {
             MergeAddedRulesIntoRuleSet();
@@ -66,7 +84,8 @@ namespace xVal.Html
                 return formattedRules;
             else {
                 var elementPrefixOrNull = elementPrefix == null ? "null" : string.Format("\"{0}\"", elementPrefix);
-                var attachValidatorStatement = string.Format("xVal.AttachValidator({0}, {1})", elementPrefixOrNull, formattedRules);
+                var optionsJson = Serializer.Serialize(clientSideOptions);
+                var attachValidatorStatement = string.Format("xVal.AttachValidator({0}, {1}, {2})", elementPrefixOrNull, formattedRules, optionsJson);
                 if (currentRenderMode == RenderMode.AttachScript)
                     return attachValidatorStatement;
                 else if(currentRenderMode == RenderMode.CompleteScriptBlock)

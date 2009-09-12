@@ -14,6 +14,8 @@
         </script>        
     </head>
     <body>
+        <%= Html.ClientSideValidation("myprefix", SampleRuleSets.AllPossibleRules) %>
+        
         <% using(Html.BeginForm()) { %>
             <table border="0">
                 <% foreach(var fieldName in SampleRuleSets.AllPossibleRules.Keys) { %>
@@ -24,7 +26,6 @@
                 <% } %>
             </table>
             <input type="submit" id="submitButton" />
-        <% } %>
-        <%= Html.ClientSideValidation("myprefix", SampleRuleSets.AllPossibleRules) %>
+        <% } %>        
     </body>
 </html>

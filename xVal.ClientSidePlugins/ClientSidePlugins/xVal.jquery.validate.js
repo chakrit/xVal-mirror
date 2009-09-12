@@ -21,24 +21,26 @@ xVal.AttachValidator = function(elementPrefix, rulesConfig, pluginName) {
 (function($) {
     xVal.Plugins["jquery.validate"] = {
         AttachValidator: function(elementPrefix, rulesConfig) {
-            this._ensureCustomFunctionsRegistered();
-            for (var i = 0; i < rulesConfig.Fields.length; i++) {
-                var fieldName = rulesConfig.Fields[i].FieldName;
-                var fieldRules = rulesConfig.Fields[i].FieldRules;
+            var self = this;
+            self._ensureCustomFunctionsRegistered();
+            $(function() {
+                for (var i = 0; i < rulesConfig.Fields.length; i++) {
+                    var fieldName = rulesConfig.Fields[i].FieldName;
+                    var fieldRules = rulesConfig.Fields[i].FieldRules;
 
-                // Is there a matching DOM element?
-                var elemId = this._makeAspNetMvcHtmlHelperID((elementPrefix ? elementPrefix + "." : "") + fieldName);
-                var elem = document.getElementById(elemId);
-
-                if (elem) {
-                    for (var j = 0; j < fieldRules.length; j++) {
-                        var ruleName = fieldRules[j].RuleName;
-                        var ruleParams = fieldRules[j].RuleParameters;
-                        var errorText = (typeof (fieldRules[j].Message) == 'undefined' ? null : fieldRules[j].Message);
-                        this._attachRuleToDOMElement(ruleName, ruleParams, errorText, $(elem), elementPrefix);
+                    // Is there a matching DOM element?
+                    var elemId = self._makeAspNetMvcHtmlHelperID((elementPrefix ? elementPrefix + "." : "") + fieldName);
+                    var elem = document.getElementById(elemId);
+                    if (elem) {
+                        for (var j = 0; j < fieldRules.length; j++) {
+                            var ruleName = fieldRules[j].RuleName;
+                            var ruleParams = fieldRules[j].RuleParameters;
+                            var errorText = (typeof (fieldRules[j].Message) == 'undefined' ? null : fieldRules[j].Message);
+                            self._attachRuleToDOMElement(ruleName, ruleParams, errorText, $(elem), elementPrefix);
+                        }
                     }
                 }
-            }
+            });
         },
 
         _makeAspNetMvcHtmlHelperID: function(fullyQualifiedModelName) {
@@ -189,11 +191,11 @@ xVal.AttachValidator = function(elementPrefix, rulesConfig, pluginName) {
 
         _associateNearbyValidationMessageSpanWithElement: function(element) {
             // If there's a <span class='field-validation-error'> soon after, it's probably supposed to display the error message
-            // jquery.validation goes looking for attributes called "htmlfor" and "generated", set as follows
+            // jquery.validation goes looking for an attribute called "for" as follows
             var nearbyMessages = element.nextAll("span.field-validation-error");
             if (nearbyMessages.length > 0) {
                 $(nearbyMessages[0]).attr("generated", "true")
-                                    .attr("htmlfor", element.attr("id"));
+                                    .attr("for", element.attr("id"));
             }
         },
 

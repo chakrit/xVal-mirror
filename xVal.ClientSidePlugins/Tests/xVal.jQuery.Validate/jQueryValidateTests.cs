@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Web;
 using Microsoft.Web.Testing.Light;
@@ -182,10 +183,22 @@ public class jQueryValidateTests
 
     private static HtmlElement GetElementByAttributeValue(HtmlPage page, string tagName, string attributeName, string attributeValue)
     {
-        var matchingElements = from elem in page.Elements.FindAll(tagName)
+        var matchingElements = from elem in FindAllElementsByTagName(page, tagName)
                                let attribs = elem.GetAttributes()
                                where attribs.Get(attributeName, (string) null) == attributeValue
                                select elem;
         return matchingElements.FirstOrDefault();
+    }
+
+    private static IEnumerable<HtmlElement> FindAllElementsByTagName(HtmlPage page, string tagName)
+    {
+        // Ideally we'd use page.Elements.FindAll(tagName), but this seems not to work
+        int index = 0;
+        HtmlElement element = page.Elements.Find(tagName, index);
+        while(element != null) {
+            yield return element;
+            index++;
+            element = page.Elements.Find(tagName, index);
+        }
     }
 }

@@ -17,7 +17,7 @@
     <form id="form1" runat="server">
         <asp:ScriptManager runat="server" ID="DriverPageScriptManager" EnablePageMethods="true" EnablePartialRendering="true">
             <Scripts>
-                <asp:ScriptReference Name="Microsoft.Web.Testing.Light.Engine.Resources.TestcaseExecutor.js" Assembly="Microsoft.Web.Testing.Light" />
+                <asp:ScriptReference Name="Microsoft.Web.Testing.Light.Engine.Resources.TestcaseExecutor.js" Assembly="Microsoft.Web.Testing.Lightweight" />
             </Scripts>
         </asp:ScriptManager>
         <asp:UpdatePanel runat="server" ID="DriverPageUpdatePanel">

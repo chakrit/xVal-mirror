@@ -193,7 +193,7 @@ xVal.AttachValidator = function(elementPrefix, rulesConfig, options, pluginName)
 
         _associateNearbyValidationMessageSpanWithElement: function(element) {
             // If there's a <span class='field-validation-error'> soon after, it's probably supposed to display the error message
-            // jquery.validation goes looking for an attribute called "for" as follows
+            // jquery.validation goes looking for an attribute called "htmlfor" as follows
             var nearbyMessages = element.nextAll("span.field-validation-error");
             if (nearbyMessages.length > 0) {
                 $(nearbyMessages[0]).attr("generated", "true")

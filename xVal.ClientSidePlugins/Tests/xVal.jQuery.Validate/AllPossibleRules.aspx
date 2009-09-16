@@ -1,4 +1,5 @@
 ﻿<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage" %>
+<%@ Import Namespace="xVal.Rules"%>
 <%@ Import Namespace="xVal.ClientSidePlugins.TestHelpers" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -14,7 +15,9 @@
         </script>        
     </head>
     <body>
-        <%= Html.ClientSideValidation("myprefix", SampleRuleSets.AllPossibleRules).UseValidationSummary("myValidationSummary", "Client-generated validation summary header") %>
+        <%= Html.ClientSideValidation("myprefix", SampleRuleSets.AllPossibleRules)
+            .UseValidationSummary("myValidationSummary", "Client-generated validation summary header")
+            .AddRule("RemotelyValidated_Field", new RemoteRule(Url.Action("EvaluateAbcRule")))%>
         
         <% using(Html.BeginForm()) { %>
             <div id="myValidationSummary">

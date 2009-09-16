@@ -8,6 +8,7 @@ namespace xVal.ClientSidePlugins.Tests
         protected void Application_Start()
         {
             RouteTable.Routes.MapRoute(null, "Test", new { controller = "Test", action = "RenderSpecificView" });
+            RouteTable.Routes.MapRoute(null, "Test/{action}", new { controller = "Test" });
         }
 
         protected void Application_BeginRequest()

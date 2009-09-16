@@ -147,6 +147,12 @@ public class jQueryValidateTests
         TestFieldValidation("myprefix_Custom", "hey", "hello", "Please enter the string 'hello'");
     }
 
+    [WebTestMethod]
+    public void RemoteValidation_Enforced()
+    {
+        TestFieldValidation("myprefix_RemotelyValidated_Field", "blah", "abcblah", "We don't allow 'blah', because it doesn't start with 'abc'");
+    }
+
     private static void TestFieldValidation(string inputField, string invalidValue, string validValue, string expectedFailureMessage)
     {
         TestFieldValidation(inputField, invalidValue, validValue, expectedFailureMessage, null);

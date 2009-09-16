@@ -75,10 +75,12 @@
     <Compile Include="Rules\DataTypeRule.cs" />
     <Compile Include="Rules\RangeRule.cs" />
     <Compile Include="Rules\RegularExpressionRule.cs" />
+    <Compile Include="Rules\RemoteRule.cs" />
     <Compile Include="Rules\RequiredRule.cs" />
     <Compile Include="Rules\Rule.cs" />
     <Compile Include="Rules\StringLengthRule.cs" />
     <Compile Include="ServerSide\ErrorInfo.cs" />
+    <Compile Include="ServerSide\RemoteValidationResult.cs" />
     <Compile Include="ServerSide\RulesException.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

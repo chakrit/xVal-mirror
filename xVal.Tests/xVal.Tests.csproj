@@ -80,6 +80,7 @@
     <Compile Include="RuleProviders\NHibernateValidatorRulesProviderTests.cs" />
     <Compile Include="Rules\RuleTests.cs" />
     <Compile Include="Rules\RulesTests.cs" />
+    <Compile Include="ServerSide\RemoteValidationResultTests.cs" />
     <Compile Include="ServerSide\RulesExceptionTests.cs" />
     <Compile Include="TestHelpers\HtmlHelperMocks.cs" />
     <Compile Include="HtmlHelpers\HtmlHelpersTests.cs" />

@@ -35,10 +35,13 @@ xVal.AttachValidator = function(elementPrefix, rulesConfig, options, pluginName)
                     var elem = document.getElementById(elemId);
                     if (elem) {
                         for (var j = 0; j < fieldRules.length; j++) {
-                            var ruleName = fieldRules[j].RuleName;
-                            var ruleParams = fieldRules[j].RuleParameters;
-                            var errorText = (typeof (fieldRules[j].Message) == 'undefined' ? null : fieldRules[j].Message);
-                            self._attachRuleToDOMElement(ruleName, ruleParams, errorText, $(elem), elementPrefix, options);
+                            var rule = fieldRules[j];
+                            if (rule != null) {
+                                var ruleName = rule.RuleName;
+                                var ruleParams = rule.RuleParameters;
+                                var errorText = (typeof (rule.Message) == 'undefined' ? null : rule.Message);
+                                self._attachRuleToDOMElement(ruleName, ruleParams, errorText, $(elem), elementPrefix, options);
+                            }
                         }
                     }
                 }
@@ -160,6 +163,19 @@ xVal.AttachValidator = function(elementPrefix, rulesConfig, options, pluginName)
                         options.xVal_comparison = [ruleParams.PropertyToCompare, elemToCompare, ruleParams.ComparisonOperator];
                         if (errorText != null) options.messages = { xVal_comparison: errorText };
                     }
+                    break;
+
+                case "Remote":
+                    var dataAccessor = {};
+                    parentForm.find("input[name], textarea[name], select[name]").each(function() {
+                        var input = this;
+                        dataAccessor[input.name] = function() { return $(input).val(); };
+                    });
+                    options.remote = {
+                        url: ruleParams.url,
+                        data: dataAccessor,
+                        type: 'post'
+                    };
                     break;
 
                 case "Custom":

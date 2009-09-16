@@ -47,7 +47,8 @@ namespace xVal.ClientSidePlugins.TestHelpers
                     new KeyValuePair<string, Rule>("StringLength_Range_Field", new StringLengthRule(4, 7)),
                     new KeyValuePair<string, Rule>("Comparison_Equals", new ComparisonRule("RequiredField", ComparisonRule.Operator.Equals)),
                     new KeyValuePair<string, Rule>("Comparison_DoesNotEqual", new ComparisonRule("RequiredField", ComparisonRule.Operator.DoesNotEqual)),
-                    new KeyValuePair<string, Rule>("Custom", new CustomRule("EqualsFixedStringRule", new { mustMatch = "hello" }, "Please enter the string 'hello'" ))
+                    new KeyValuePair<string, Rule>("Custom", new CustomRule("EqualsFixedStringRule", new { mustMatch = "hello" }, "Please enter the string 'hello'" )),
+                    new KeyValuePair<string, Rule>("RemotelyValidated_Field", null)
                 };
                 return new RuleSet(rules.ToLookup(x => x.Key, x => x.Value));
             }

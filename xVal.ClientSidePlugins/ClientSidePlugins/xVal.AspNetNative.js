@@ -42,10 +42,13 @@ xVal.Plugins["AspNetNative"] = {
 
             if (elem) {
                 for (var j = 0; j < fieldRules.length; j++) {
-                    var ruleName = fieldRules[j].RuleName;
-                    var ruleParams = fieldRules[j].RuleParameters;
-                    var errorText = (typeof (fieldRules[j].Message) == 'undefined' ? null : fieldRules[j].Message);
-                    this._attachRuleToDOMElement(ruleName, ruleParams, errorText, elem, elementPrefix);
+                    var rule = fieldRules[j];
+                    if (rule != null) {
+                        var ruleName = rule.RuleName;
+                        var ruleParams = rule.RuleParameters;
+                        var errorText = (typeof (rule.Message) == 'undefined' ? null : rule.Message);
+                        this._attachRuleToDOMElement(ruleName, ruleParams, errorText, elem, elementPrefix);
+                    }
                 }
             }
         }

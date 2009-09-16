@@ -183,6 +183,15 @@ namespace xVal.Tests.Rules
             Assert.Equal("Hello from MyResources", rule.ErrorMessageOrResourceString);
         }
 
+        [Fact]
+        public void RemoteRule_Takes_Url()
+        {
+            var remoteRule = new RemoteRule("/some/test/url");
+            var parameters = remoteRule.ListParameters();            
+            Assert.Equal(1, parameters.Count);
+            Assert.Equal("/some/test/url", parameters["url"]);
+        }
+
         private static class MyResources
         {
             public static string SomeMessage { get { return "Hello from MyResources"; } }

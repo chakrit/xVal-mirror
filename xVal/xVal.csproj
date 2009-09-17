@@ -12,6 +12,8 @@
     <AssemblyName>xVal</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>xVal.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -82,6 +84,9 @@
     <Compile Include="ServerSide\ErrorInfo.cs" />
     <Compile Include="ServerSide\RemoteValidationResult.cs" />
     <Compile Include="ServerSide\RulesException.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="xVal.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

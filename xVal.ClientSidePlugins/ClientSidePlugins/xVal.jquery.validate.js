@@ -50,7 +50,7 @@ xVal.AttachValidator = function(elementPrefix, rulesConfig, options, pluginName)
 
         _makeAspNetMvcHtmlHelperID: function(fullyQualifiedModelName) {
             // If you have changed HtmlHelper.IdAttributeDotReplacement from "_" to something else, then you must also change the following line to match
-            return fullyQualifiedModelName.replace(".", "_");
+            return fullyQualifiedModelName.replace(/\./g, "_");
         },
 
         _attachRuleToDOMElement: function(ruleName, ruleParams, errorText, element, elementPrefix, options) {
